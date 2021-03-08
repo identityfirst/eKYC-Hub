@@ -1,0 +1,166 @@
+openapi: 3.0.1
+info:
+  title: idv-hub
+  description: Verifiable Claims Hub
+  version: 1.0.0
+servers:
+- url: /api/v1
+tags:
+- name: eKYC OIDC
+  description: eKYC OIDC
+- name: Specification
+  description: The swagger API specification
+paths:
+  /ekyc/config:
+    get:
+      tags:
+      - Passbase
+      description: Get public config
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/passbase/{key}:
+    get:
+      tags:
+      - Passbase
+      parameters:
+      - name: key
+        in: path
+        description: key from Passbase
+        required: true
+        schema:
+          type: string
+      description: Fetch data from passbase
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/passbase/all:
+    get:
+      tags:
+      - Passbase
+      description: Fetch data from passbase
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/vc/my:
+    get:
+      tags:
+      - Passbase
+      description: Fetch data from passbase
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/vc/claims:
+    get:
+      tags:
+      - Passbase
+      description: Fetch data from passbase
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/vc/{sub}:
+    get:
+      tags:
+      - Passbase
+      parameters:
+      - name: sub
+        in: path
+        description: oidc sub identifier
+        required: true
+        schema:
+          type: string
+      description: GEt vc from db
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/vc/pending:
+    get:
+      tags:
+      - Passbase
+      description: GEt pending vc from db
+      responses:
+        200:
+          description: OK
+          content: {}
+  /ekyc/vc/{id}:
+    delete:
+      tags:
+      - Passbase
+      parameters:
+      - name: id
+        in: path
+        description: oidc sub identifier
+        required: true
+        schema:
+          type: string
+      description: Delete vc from db
+      responses:
+        200:
+          description: OK
+          content: {}
+  /idp/vc/{sub}:
+    get:
+      tags:
+      - Idp
+      parameters:
+      - name: sub
+        in: path
+        description: oidc sub identifier
+        required: true
+        schema:
+          type: string
+      - name: claims
+        in: query
+        description: oidc claims requested
+        required: true
+        schema:
+          type: string
+      description: GEt vc from db
+      responses:
+        200:
+          description: OK
+          content: {}
+
+  /examples/{id}:
+    get:
+      tags:
+      - Examples
+      parameters:
+      - name: id
+        in: path
+        description: The id of the example to retrieve
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Return the example with the specified id
+          content: {}
+        404:
+          description: Example not found
+          content: {}
+  /spec:
+    get:
+      tags:
+      - Specification
+      responses:
+        200:
+          description: Return the API specification
+          content: {}
+components:
+  schemas:
+    ExampleBody:
+      title: example
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: no_stress

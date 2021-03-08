@@ -1,0 +1,10 @@
+{
+  "claims": {
+    "given_name": "JOE",
+    "family_name": "DOE",
+    "birthdate": "1992-06-20"
+  },
+  "verification": {
+    "trust_framework": null
+  }
+}

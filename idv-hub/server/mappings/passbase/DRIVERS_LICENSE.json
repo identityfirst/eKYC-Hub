@@ -1,0 +1,20 @@
+{
+  "metadata.source":"Passbase",
+  "metadata.document":"driving_permit",
+  "verification.evidence[0].verifier.organization":"Passbase",
+  "verification.evidence[0].verifier.txn":{"type":"query", "path":"key"},
+  "verification.evidence[0].document.type":"driving_permit",
+  "verification.evidence[0].document.issuer.name":{"type":"query", "path":"documents[0].document_information[?(@.key==\"AUTHORITY\")].value"},
+  "verification.evidence[0].document.number":{"type":"query", "path":"documents[0].document_information[?(@.key==\"DOCUMENT_NUMBER\")].value"},
+  "verification.evidence[0].document.date_of_issuance":{"type":"query", "path":"documents[0].document_information[?(@.key==\"DATE_OF_ISSUE\")].value", "postProcessor":"toSimpleDate"},
+  "verification.evidence[0].document.date_of_expiry":{"type":"query", "path":"documents[0].document_information[?(@.key==\"DATE_OF_EXPIRY\")].value", "postProcessor":"toSimpleDate"},
+  "verification.evidence[0].type":"id_document",
+  "verification.evidence[0].method":"uripp",
+  "verification.evidence[0].time":{"type":"query", "path":"created_at"},
+  "verification.trust_framework":null,
+  "verification.time":{"type":"query", "path":"created_at"},
+  "verification.verification_process":{"type":"query", "path":"key"},
+  "claims.given_name":{"type":"query", "path":"documents[0].document_information[?(@.key==\"FIRST_NAMES\")].value"},
+  "claims.family_name":{"type":"query", "path":"documents[0].document_information[?(@.key==\"LAST_NAME\")].value"},
+  "claims.birthdate":{"type":"query", "path":"documents[0].document_information[?(@.key==\"DATE_OF_BIRTH\")].value", "postProcessor":"toSimpleDate"}
+}

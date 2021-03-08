@@ -1,0 +1,17 @@
+{
+  "claims" : {
+    "given_name" : "Max",
+    "family_name" : "Meier",
+    "birthdate" : "1956-01-28"
+  },
+  "verification" : {
+    "evidence" : {
+      "method" : "pipp",
+      "type" : "id_document",
+      "document" : {
+        "type" : "idcard"
+      }
+    },
+    "trust_framework" : "de_aml"
+  }
+}

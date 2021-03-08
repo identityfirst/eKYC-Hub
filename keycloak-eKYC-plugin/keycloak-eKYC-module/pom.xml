@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>tech.identityfirst</groupId>
+    <artifactId>keycloak-eKYC-module</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+
+        <!-- general settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <!-- dependency versions -->
+        <lombok.version>1.18.12</lombok.version>
+        <keycloak.version>10.0.0</keycloak.version>
+    </properties>
+
+        <dependencies>
+
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-core</artifactId>
+                <version>${keycloak.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-server-spi</artifactId>
+                <version>${keycloak.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-model-jpa</artifactId>
+                <version>${keycloak.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-saml-core-public</artifactId>
+                <version>${keycloak.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.27.0-GA</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <scope>runtime</scope>
+                <version>8.0.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.5.2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.whitfin</groupId>
+                <artifactId>dot-notes</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+        </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+
+                <plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>3.8.9</version>
+                    <!--<configuration>-->
+                        <!--&lt;!&ndash;<url>hibernate:spring:tech.identityfirst.models.vc.jpa.entities?dialect=liquibase.ext.hibernate.database.HibernateGenericDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</url>&ndash;&gt;-->
+                        <!--<url>hibernate:spring:tech.identityfirst.models.vc.jpa.entities?dialect=org.hibernate.dialect.MySQL5Dialect</url>-->
+                        <!--&lt;!&ndash;<driver>liquibase.ext.hibernate.database.connection.HibernateDriver</driver>&ndash;&gt;-->
+                        <!--<outputChangeLogFile>src/main/resources/META-INF/jpa-changelog-vc.xml</outputChangeLogFile>-->
+                    <!--</configuration>-->
+                            <configuration>
+                                <!--<changeLogFile>src/main/resources/META-INF/jpa-changelog-vc.xml</changeLogFile>-->
+                                <url>jdbc:mysql://localhost/test?useSSL=false</url>
+                                <username>test</username>
+                                <password>test</password>
+                                <driver>com.mysql.jdbc.Driver</driver>
+                                <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                                <migrationSqlOutputFile>target/classes/migrate.sql</migrationSqlOutputFile>
+                                <outputChangeLogFile>src/main/resources/META-INF/jpa-changelog-vc.xml</outputChangeLogFile>
+                                <changeLogFile>src/main/resources/META-INF/jpa-changelog-vc.xml</changeLogFile>
+                            </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

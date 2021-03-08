@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <module-alias name="deployment.keycloak-eKYC"/>
+    </deployment>
+    <sub-deployment name="keycloak-eKYC-module.jar">
+        <dependencies>
+            <module name="org.hibernate"/>
+            <module name="org.keycloak.keycloak-services"/>
+        </dependencies>
+    </sub-deployment>
+</jboss-deployment-structure>

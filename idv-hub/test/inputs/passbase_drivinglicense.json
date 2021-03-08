@@ -1,0 +1,77 @@
+{
+  "authentication": {
+    "key": "da56c2e3-db5a-42b3-a14a-e33e12452512",
+    "reviewed_at": null,
+    "review_status": null,
+    "created_at": "2020-06-07T08:23:59.763Z",
+    "additional_attributes": {
+      "identifier": "test@protonmail.com",
+      "country_code": "pl",
+      "zm_session_id": "4c5d6985-42c8-4ba6-9804-0612af809512",
+      "identifier_type": "email"
+    },
+    "authentication_assessments": {
+      "facematch": {
+        "value": "0.8"
+      },
+      "id_authenticity": {
+        "value": "0.9"
+      },
+      "liveness": {
+        "value": "0.93"
+      },
+      "overall": {
+        "value": "0.8825"
+      }
+    },
+    "authentication_document": "DRIVERS_LICENSE",
+    "additional_document": null,
+    "documents": [
+      {
+        "document_type": "DRIVERS_LICENSE",
+        "document_information": [
+          {
+            "key": "DATE_OF_EXPIRY",
+            "value": "2033-01-19T00:00:00.000Z"
+          },
+          {
+            "key": "DATE_OF_ISSUE",
+            "value": "2011-07-12T00:00:00.000Z"
+          },
+          {
+            "key": "DATE_OF_BIRTH",
+            "value": "1992-06-20T00:00:00.000Z"
+          },
+          {
+            "key": "AUTHORITY",
+            "value": "CITY OF WOLLU"
+          },
+          {
+            "key": "PLACE_OF_BIRTH",
+            "value": "WOLLU"
+          },
+          {
+            "key": "LAST_NAME",
+            "value": "DOE"
+          },
+          {
+            "key": "FIRST_NAMES",
+            "value": "JOE"
+          },
+          {
+            "key": "DOCUMENT_NUMBER",
+            "value": "00339/11/2661"
+          }
+        ]
+      },
+      {
+        "document_type": null,
+        "document_information": []
+      }
+    ],
+    "end_user": {
+      "customer_user_id": null
+    },
+    "watchlist": null
+  }
+}

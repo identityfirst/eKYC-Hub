@@ -1,0 +1,66 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+    font-family: 'Oxygen', sans-serif;
+    color: #4a4a4a;
+}
+
+h1,h2,h3,h4 {
+    font-family: 'Oxygen', sans-serif;
+}
+
+/* Custom container */
+.container-narrow {
+    margin: 0 auto;
+    max-width: 700px;
+}
+.container-narrow > hr {
+    margin: 30px 0;
+}
+
+.masthead h3 {
+    font-family: 'Oxygen';
+}
+
+input[type="submit"] {
+    width: 90px;
+    background-color: #23A259;
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type="submit"]:hover {
+    -webkit-transition:background-color 0.07s ease-in;
+    -moz-transition:-background-color 0.07s esse-in;
+    -o-transition:background-color 0.07s ease-in;
+    transition:background-color 0.07s ease-in;
+    background-color: #30C46E;
+}
+
+
+input[type="text"], input[type="password"] {
+    background-color: #eee;
+    border: none;
+}
+
+label {
+    display: block;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    outline: none;
+}
+
+h1 {
+    font-size: 1.55em;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 1.1em;
+}
+
+a {
+    color: #2A71AD;
+}

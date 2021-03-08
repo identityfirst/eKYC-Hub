@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>idv-hub</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.4-build.3588/angular.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@passbase/button/button.js" ></script>
+    <base href="/">
+
+</head>
+<body>
+<div id="angularController" ng-app="vcApp" ng-controller="vcCtrl">
+    <div id="vcSuccessAlert" class="alert alert-success alert-dismissible fade d-none" role="alert">
+        Action finished successfully.
+    </div>
+    <div class="container p-3 my-3 border">
+        <h5>You are logged in as: {{ username }}</h5>
+    </div>
+
+    <div class="d-flex flex-row justify-content-center align-items-center" style="height: 100px;">
+        <div id="passbase-button"></div>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+    var app = angular.module('vcApp', []);
+    app.controller('vcCtrl', function ($scope, $http) {
+
+        $scope.uploadPassbaseKey = function passPassbaseKey(key) {
+            console.log(key)
+            if(!key){
+                key = $scope.passbaseKey
+            }
+            $http.get(`/api/v1/ekyc/passbase/${key}`)
+                .then(() => window.close())
+        }
+
+        $scope.loadAccount = function () {
+            $http.get('/api/v2/oidc/account')
+                .then(response => $scope.username = response.data.username)
+        }
+        $scope.loadAccount()
+
+        $http.get(`/api/v1/ekyc/config`)
+            .then((data) => $scope.config = data.data)
+            .then(()=>window.initPassbase())
+
+    });
+
+    function initPassbase() {
+        Passbase.renderButton(
+            document.getElementById("passbase-button"),
+            (error, authKey, additionalAttributes) => {
+                angular.element($('#angularController')).scope().uploadPassbaseKey(authKey)
+            },
+            angular.element($('#angularController')).scope().config.passbasePublicKey,
+            {}
+        );
+    }
+
+
+</script>
+</body>
+</html>

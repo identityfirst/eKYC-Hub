@@ -1,0 +1,19 @@
+{
+  "verified_claims":{
+    "verification":{
+      "trust_framework":"eidas_ial_substantial"
+    },
+    "claims":{
+      "given_name":"Max",
+      "family_name":"Meier",
+      "birthdate":"1956-01-28",
+      "place_of_birth":{
+        "country":"DE",
+        "locality":"Musterstadt"
+      },
+      "nationalities":[
+        "DE"
+      ]
+    }
+  }
+}

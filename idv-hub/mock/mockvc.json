@@ -1,0 +1,101 @@
+[
+  {
+    "id":"1",
+    "verification": {
+      "evidence": [
+        {
+          "verifier": {
+            "organization": "Passbase",
+            "txn": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+          },
+          "document": {
+            "type": "driving_permit",
+            "issuer": {
+              "name": "PREZYDENT MIASTA KIELCE"
+            },
+            "number": "00339/11/2661",
+            "date_of_issuance": "2011-07-12",
+            "date_of_expiry": "2033-01-19"
+          },
+          "type": "id_document",
+          "method": "uripp",
+          "time": "2020-06-07T08:23:59.763Z"
+        }
+      ],
+      "trust_framework": null,
+      "time": "2020-06-07T08:23:59.763Z",
+      "verification_process": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+    },
+    "claims": {
+      "given_name": "MICHAL",
+      "family_name": "KĘPKOWSKI",
+      "birthdate": "1992-06-13"
+    }
+  },
+  {
+    "id":"2",
+    "verification": {
+      "evidence": [
+        {
+          "verifier": {
+            "organization": "Passbase",
+            "txn": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+          },
+          "document": {
+            "type": "idcard",
+            "issuer": {
+              "name": "PREZYDENT MIASTA KIELCE"
+            },
+            "number": "00339/11/2661",
+            "date_of_issuance": "2011-07-12",
+            "date_of_expiry": "2033-01-19"
+          },
+          "type": "id_document",
+          "method": "uripp",
+          "time": "2020-06-07T08:23:59.763Z"
+        }
+      ],
+      "trust_framework": null,
+      "time": "2020-06-07T08:23:59.763Z",
+      "verification_process": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+    },
+    "claims": {
+      "given_name": "MICHAL MACIEJ",
+      "family_name": "KĘPKOWSKI",
+      "birthdate": "1992-06-13"
+    }
+  },
+  {
+    "id":"3",
+    "verification": {
+      "evidence": [
+        {
+          "verifier": {
+            "organization": "Passbase",
+            "txn": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+          },
+          "document": {
+            "type": "passport",
+            "issuer": {
+              "name": "PREZYDENT MIASTA KIELCE"
+            },
+            "number": "00339/11/2661",
+            "date_of_issuance": "2011-07-12",
+            "date_of_expiry": "2033-01-19"
+          },
+          "type": "id_document",
+          "method": "uripp",
+          "time": "2020-06-07T08:23:59.763Z"
+        }
+      ],
+      "trust_framework": null,
+      "time": "2020-06-07T08:23:59.763Z",
+      "verification_process": "da56c2e3-db5a-42b3-a14a-e33e1245252e"
+    },
+    "claims": {
+      "given_name": "MICHAL MACIEJ",
+      "family_name": "KĘPKOWSKI",
+      "birthdate": "1992-06-13"
+    }
+  }
+]

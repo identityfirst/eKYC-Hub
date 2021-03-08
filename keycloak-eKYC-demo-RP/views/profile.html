@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--<base href="/">-->
+    <meta charset="utf-8">
+    <title>Finance Demo - Home Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Finance Demo Application">
+
+    <!-- Le styles -->
+    <link href="https://fonts.googleapis.com/css?family=Oxygen:400,300,700&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+    <link href="static/css/custom.css" rel="stylesheet">
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular-route.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.js"></script>
+
+    <!--<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>-->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="/src/js/html5shiv.js"></script>
+    <![endif]-->
+
+
+
+</head>
+
+
+<div class="container-narrow">
+
+    <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+            <li class="active"><a href="/">Home</a></li>
+            <li><a href="#" target="_blank">Contact</a></li>
+        </ul>
+        <h1>Finance Demo</h1>
+    </div>
+
+    <hr>
+
+
+    <div class="jumbotron2">
+
+        <h3>You are now signed in.</h3>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="username" class="col-sm-2 control-label">User Identifier</label>
+                <div class="col-sm-10">
+                    <pre id="username"></pre>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="claims" class="col-sm-2 control-label">User Info Claims</label>
+                <div class="col-sm-10">
+                    <pre id="claims" ></pre>
+                </div>
+            </div>
+            <div id="vcClaimsGroup" class="form-group" style="display: none">
+                <label for="claims" class="col-sm-2 control-label">Verified Claims</label>
+                <div class="col-sm-10">
+                    <pre id="vcClaims" ></pre>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-md-10 text-right">
+                <button type="button"  onclick="getUserInfo()"  class="btn btn-info">Refresh user info</button>
+                <button type="button"  onclick="requestVc('any')"  class="btn btn-info">Verify User Data</button>
+                <button type="button"  onclick="requestVc('full')"  class="btn btn-info">Verify Complete User Data</button>
+                <button type="button"  onclick="location.href='/logout'"  class="btn btn-info">Logout</button>
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="footer row">
+        <div class="col-md-6">&copy; 2020 Identity First</div>
+    </div>
+    <script>
+        function getUserInfo() {
+            $.ajax({
+                type: "GET",
+                url: "/info",
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: (data) => {
+                    var parsedData = JSON.parse(data)
+                    $("#username").text(parsedData.sub)
+                    if(parsedData.verified_claims) {
+                        $("#vcClaims").text(JSON.stringify(parsedData.verified_claims, null, 2))
+                        $("#vcClaimsGroup").css("display", "block")
+                        delete parsedData.verified_claims
+                    }
+                    $("#claims").text(JSON.stringify(parsedData, null, 2))
+                }
+            });
+        }
+        function requestVc(type) {
+            window.location = "/login/"+type
+        }
+        getUserInfo()
+    </script>
+
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!--<script src="/static/js/jquery.js"></script>-->
+<!--<script src="/static/js/bootstrap-transition.js"></script>-->
+<!--<script src="/static/js/bootstrap-alert.js"></script>-->
+<!--<script src="/static/js/bootstrap-modal.js"></script>-->
+<!--<script src="/static/js/bootstrap-dropdown.js"></script>-->
+<!--<script src="/static/js/bootstrap-scrollspy.js"></script>-->
+<!--<script src="/static/js/bootstrap-tab.js"></script>-->
+<!--<script src="/static/js/bootstrap-tooltip.js"></script>-->
+<!--<script src="/static/js/bootstrap-popover.js"></script>-->
+<!--<script src="/static/js/bootstrap-button.js"></script>-->
+<!--<script src="/static/js/bootstrap-collapse.js"></script>-->
+<!--<script src="/static/js/bootstrap-carousel.js"></script>-->
+<!--<script src="/static/js/bootstrap-typeahead.js"></script>-->
+<!--<script src="https://code.jquery.com/jquery.js"></script>-->
+</body>
+</html>

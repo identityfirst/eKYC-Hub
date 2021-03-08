@@ -1,0 +1,22 @@
+{
+
+      "verification": {
+        "trust_framework": null,
+        "time": "2020-06-07T08:23:59.763Z",
+        "evidence": [
+          {
+            "type": "id_document",
+            "method": "uripp",
+            "document": {
+              "type": "driving_permit"
+            }
+          }
+        ]
+      },
+      "claims": {
+        "given_name": "JOE",
+        "family_name": "DOE",
+        "birthdate": "1992-06-20"
+      }
+
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html style="font-size: 11px" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>idv-hub</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.4-build.3588/angular.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@passbase/button/button.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/js/all.min.js" integrity="sha256-HkXXtFRaflZ7gjmpjGQBENGnq8NIno4SDNq/3DbkMgo=" crossorigin="anonymous"></script>
+    <base href="/">
+
+</head>
+<body>
+<div id="angularController" ng-app="vcApp" ng-controller="vcCtrl">
+
+    <div id="vcSuccessAlert" class="alert alert-success alert-dismissible fade d-none" role="alert">
+        Action finished successfully.
+    </div>
+    <div id="vcWarningAlert" class="alert alert-warning alert-dismissible fade d-none" role="alert">
+    </div>
+
+    <div class="container p-3 my-3 border">
+        <h5>You are logged in as: {{ username }}</h5>
+    </div>
+
+    <div class="container p-3 my-3 border">
+        <h4>Your verified claims</h4>
+        <div class="container">
+            <div class="card-deck">
+                <div ng-repeat="vc in vcs" class="col-sm-6 col-lg-4 mb-3">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ getDocumentType(vc) }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ getEvidenceVerifier(vc) }}</h6>
+                            <table class="table">
+                                <tbody>
+                                <tr ng-repeat="(key, value) in vc.claims">
+                                    <td>{{ mapClaimName(key) }}</td>
+                                    <td>{{ value }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-danger" ng-click="deleteVc(vc._id)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container p-3 my-3 border">
+        <div>
+        <h4 style="display: inline-block; padding-right: 10px;">Pending verifications  </h4><div style="display: inline-block;" ng-click="loadPending()"><i class="fas fa-sync"></i></div>
+        </div>
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <th>Key</th>
+                    <th>Provider</th>
+                    <th>Date</th>
+                    <th></th>
+                    <th></th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="vc in pendingVcs">
+                    <td>{{ vc.key }}</td>
+                    <td>{{ vc.provider }}</td>
+                    <td>{{ vc.date }}</td>
+                    <td width="10%"><button class="btn btn-primary" ng-click="uploadPassbaseKey(vc.key)">Check</button></td>
+                    <td width="10%"><button class="btn btn-danger" ng-click="deleteVc(vc._id)">Delete</button></td>
+                </tr>
+                <tr style="text-align: center;" ng-class="{'d-none': pendingVcs.length > 0 }">
+                    <td colspan="5">No data available in table</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container p-3 my-3 border">
+        <h4>Add new claims</h4>
+        <div class="container">
+
+                            <button class="btn btn-primary" onclick="window.open('/auth/passbase.html')">Passbase</button>
+
+        </div>
+    </div>
+    <div style="display: none" class="container p-3 my-3 border">
+        <h4>Debug</h4>
+        <h5>Manual pass authKey</h5>
+        <div>
+            <input id="authkey" placeholder="authkey" ng-model="passbaseKey">
+            <button type="button" ng-click="uploadPassbaseKey()">Send</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var app = angular.module('vcApp', []);
+    app.controller('vcCtrl', function ($scope, $http) {
+
+        $scope.loadVcs = function () {
+            $http.get('/api/v1/ekyc/vc/my')
+                .then(response => $scope.vcs = response.data)
+        }
+        $scope.loadVcs()
+
+        $scope.loadAccount = function () {
+            $http.get('/api/v2/oidc/account')
+                .then(response => $scope.username = response.data.username)
+        }
+        $scope.loadAccount()
+
+        $scope.loadPending = function () {
+            $http.get('/api/v1/ekyc/vc/pending')
+                .then(response => $scope.pendingVcs = response.data)
+        }
+        $scope.loadPending()
+
+        $scope.getDocumentType = function (vc) {
+            return this.mapDocumentName(vc.verification.evidence[0].document.type)
+        }
+
+        $scope.deleteVc = function (id) {
+            $http.delete(`/api/v1/ekyc/vc/${id}`)
+                .then(() => $("#vcSuccessAlert").removeClass('d-none').addClass('show'))
+                .then(() => this.loadVcs())
+                .then(() => this.loadPending())
+                .then(() => setTimeout(function () {
+                    $("#vcSuccessAlert").addClass('d-none').removeClass('show')
+                }, 5000))
+        }
+
+        $scope.getEvidenceVerifier = function (vc) {
+            return vc.verification.evidence[0].verifier.organization
+        }
+
+        $scope.uploadPassbaseKey = function (key) {
+            if (!key) {
+                key = $scope.passbaseKey
+            }
+            $http.get(`/api/v1/ekyc/passbase/${key}`)
+                .then(() => $("#vcSuccessAlert").removeClass('d-none').addClass('show'))
+                .then(() => this.loadVcs())
+                .then(() => this.loadPending())
+                .then(() => setTimeout(function () {
+                    $("#vcSuccessAlert").addClass('d-none').removeClass('show')
+                }, 5000))
+                .catch((e)=> {
+                    this.showWarning("Verification is not ready yet.")
+                    this.loadPending()
+                })
+        }
+
+        $scope.mapClaimName = function (name) {
+            return $scope.claimNames[name]
+        }
+        $scope.claimNames = {
+            birthdate: "Date of birth",
+            family_name: "Family name",
+            given_name: "Given names"
+        }
+
+        $scope.mapDocumentName = function (name) {
+            return $scope.documentType[name]
+        }
+        $scope.documentType = {
+            driving_permit: "Driving License",
+            idcard: "ID Card",
+            passport: "Passport"
+        }
+
+        $scope.showWarning = function(text){
+            $("#vcWarningAlert").text(text)
+            $("#vcWarningAlert").removeClass('d-none').addClass('show')
+            setTimeout(function () {
+                $("#vcWarningAlert").addClass('d-none').removeClass('show')
+            }, 5000)
+        }
+
+
+    });
+
+</script>
+</body>
+</html>
