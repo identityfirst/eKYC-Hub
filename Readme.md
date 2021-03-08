@@ -13,7 +13,11 @@ The eKYC Hub has been implemented with [Passbase](https://passbase.com/) - one o
 
 All provided code is open-source and available under the Apache 2.0 license.
 
-For more information and other open-source identity software, visit https://identityfirst.tech
+For more information and other open-source identity software, visit https://identityfirst.github.io/
+
+# eKYC Hub Overview
+
+![image OIDC eKYC](/idv_hub.png)
 
 # eKYC Hub Setup
 
