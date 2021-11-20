@@ -8,8 +8,10 @@ import os from 'os';
 import cookieParser from 'cookie-parser';
 import l from './logger';
 import session from 'express-session'
+require('express-async-errors');
 
 import installValidator from './openapi';
+import {SessionService} from "../api/services/session.service";
 
 const app = express();
 const exit = process.exit;
@@ -43,10 +45,17 @@ export default class ExpressServer {
 
     app.use("/auth",this.isAuthenticated);
     app.use("/auth",express.static(`${root}/private`));
+
+
   }
 
 
   isAuthenticated(req, res, next) {
+        if (req.query.sessionId && new SessionService().isSessionValid(req.query.sessionId)){
+            req.session.sessionId = req.query.sessionId
+            req.session.save()
+            return next();
+        }
         if (req.session && req.session.user) {
             return next();
         }else {

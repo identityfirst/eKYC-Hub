@@ -1,0 +1,26 @@
+{
+  "userinfo": {
+    "verified_claims": {
+      "verification": {
+        "trust_framework": null,
+        "time": {
+          "max_age": 852
+        },
+        "evidence": [
+          {
+            "type": null,
+            "method": null,
+            "document": {
+              "type": {
+                "value": "driving_permit"
+              }
+            }
+          }
+        ]
+      },
+      "claims": {
+        "birthdate": null
+      }
+    }
+  }
+}

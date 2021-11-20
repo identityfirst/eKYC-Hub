@@ -19,53 +19,67 @@
     <div id="vcSuccessAlert" class="alert alert-success alert-dismissible fade d-none" role="alert">
         Action finished successfully.
     </div>
-    <div class="container p-3 my-3 border">
-        <h5>You are logged in as: {{ username }}</h5>
-    </div>
 
     <div class="d-flex flex-row justify-content-center align-items-center" style="height: 100px;">
         <div id="passbase-button"></div>
     </div>
 
 </div>
-<script type="text/javascript">
+<script >
 
     var app = angular.module('vcApp', []);
-    app.controller('vcCtrl', function ($scope, $http) {
+    app.controller('vcCtrl', function ($scope, $http,$location) {
 
         $scope.uploadPassbaseKey = function passPassbaseKey(key) {
             console.log(key)
             if(!key){
-                key = $scope.passbaseKey
+                alert("Empty service handle")
             }
-            $http.get(`/api/v1/ekyc/passbase/${key}`)
-                .then(() => window.close())
+
+            let sessionKey = "sessionId"
+            let sessionId = window.location.search.substring(window.location.search.indexOf(sessionKey)+sessionKey.length+1);
+            $http.post(`/api/v1/session/handle`,{serviceHandle: key,serviceName:"passbase",sessionId: sessionId})
+                    .then((response) => window.location = response.data.callbackUrl)
         }
 
         $scope.loadAccount = function () {
             $http.get('/api/v2/oidc/account')
                 .then(response => $scope.username = response.data.username)
         }
-        $scope.loadAccount()
 
         $http.get(`/api/v1/ekyc/config`)
             .then((data) => $scope.config = data.data)
-            .then(()=>window.initPassbase())
+            .then(()=>window.initPassbase($scope.config.passbasePublicKey))
 
     });
 
-    function initPassbase() {
+    function initPassbase(pubKey) {
         Passbase.renderButton(
             document.getElementById("passbase-button"),
-            (error, authKey, additionalAttributes) => {
-                angular.element($('#angularController')).scope().uploadPassbaseKey(authKey)
-            },
-            angular.element($('#angularController')).scope().config.passbasePublicKey,
-            {}
-        );
+            pubKey, {
+            onFinish: (identityAccessKey) => {angular.element($('#angularController')).scope().uploadPassbaseKey(identityAccessKey)},
+            onError: (errorCode) => {alert(errorCode)},
+            onStart: () => {},
+            prefillAttributes: {
+                    email: "user@gmail.com",
+                    country: "au"
+            }
+
+        });
+
+
     }
 
 
+    function waitForButton(){
+        var poops = setInterval(function(){
+            if( document.getElementsByClassName("passbase-auth-element")[0]){
+                clearInterval(poops);
+                document.getElementsByClassName("passbase-auth-element")[0].click()
+            }
+        }, 100);
+    }
+    waitForButton();
 </script>
 </body>
 </html>

@@ -9,5 +9,5 @@ export enum MappingType {
     DIRECT = "direct",
     QUERY = "query",
     NULL = ""
-
 }
+

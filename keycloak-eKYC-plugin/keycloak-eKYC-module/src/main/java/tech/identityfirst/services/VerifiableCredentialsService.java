@@ -3,6 +3,7 @@ package tech.identityfirst.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.jbosslog.JBossLog;
 import org.apache.http.HttpStatus;
 import org.keycloak.models.KeycloakSession;
@@ -20,13 +21,17 @@ import java.util.List;
 public class VerifiableCredentialsService {
     private final KeycloakSession session;
     private String getVcEndpoint;
+    private String getWellKnownEndpoint;
     private Client client;
     private ObjectMapper mapper;
+    private String VC_PATH="%s/api/v1/idp/vc";
+    private String WELL_KNOWN_PATH="%s/.well-known/openid-configuration";
 
     public VerifiableCredentialsService(KeycloakSession session) {
         this.session = session;
-        this.getVcEndpoint = System.getenv("GET_VC_ENDPOINT");
-        this.getVcEndpoint = this.getVcEndpoint != null ? this.getVcEndpoint : "http://localhost:5000";
+        String idvUrl = System.getenv("IDV_URL") != null ? System.getenv("IDV_URL") : "http://localhost:5000";;
+        this.getVcEndpoint = String.format(VC_PATH,idvUrl);
+        this.getWellKnownEndpoint = String.format(WELL_KNOWN_PATH,idvUrl);
         this.client  = ClientBuilder.newClient();
         this.mapper = new ObjectMapper();
     }
@@ -57,5 +62,26 @@ public class VerifiableCredentialsService {
             return new ArrayList<>();
         }
         return vcs;
+    }
+    public JsonNode getWellKnown(){
+        try {
+            Response response = client
+                    .target(this.getWellKnownEndpoint)
+                    .request()
+                    .get();
+            if(response.getStatus() != HttpStatus.SC_OK){
+                log.error("Get well-known failed: "+response.toString());
+                return mapper.createObjectNode();
+            }
+            String data = response.readEntity(String.class);
+            JsonNode wellKnown = mapper.readValue(data, JsonNode.class);
+            return wellKnown;
+        } catch (JsonProcessingException e) {
+            log.error("well-known parsing error",e);
+            return mapper.createObjectNode();
+        } catch (Exception e) {
+            log.error("getting External well-known exception", e);
+            return mapper.createObjectNode();
+        }
     }
 }

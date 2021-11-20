@@ -140,7 +140,7 @@
 
         $scope.uploadPassbaseKey = function (key) {
             if (!key) {
-                key = $scope.passbaseKey
+                return
             }
             $http.get(`/api/v1/ekyc/passbase/${key}`)
                 .then(() => $("#vcSuccessAlert").removeClass('d-none').addClass('show'))

@@ -30,7 +30,13 @@ export class FieldMapping {
     }
 
     private getDocType(docTypePath: string, body: any): string{
-        let type = jp.query(body,docTypePath)[0]
+        let type = ""
+        try {
+            type = jp.query(body, docTypePath)[0]
+        }catch (e) {
+            log.error("Mapping error "+docTypePath)
+            throw e
+        }
         log.info("Found document type "+type,this.logName)
         return type
     }

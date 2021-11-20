@@ -45,6 +45,21 @@ paths:
         200:
           description: OK
           content: {}
+  /ekyc/vc:
+    post:
+      tags:
+        - Debug
+      description: Insert VC for debug purposes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VCBody'
+
+      responses:
+        200:
+          description: OK
+          content: {}
   /ekyc/vc/my:
     get:
       tags:
@@ -126,6 +141,42 @@ paths:
         200:
           description: OK
           content: {}
+  /idp/vc:
+    post:
+      tags:
+      - Idp
+      description: Get similarity rate of claim
+      responses:
+        200:
+          description: OK
+          content: {}
+  /idp/verify-claim:
+    post:
+      tags:
+      - Idp
+      description: Get similarity rate of claim
+      responses:
+        200:
+          description: OK
+          content: {}
+  /session:
+    post:
+      tags:
+      - Session
+      description: Get new session
+      responses:
+        200:
+          description: OK
+          content: {}
+  /session/handle:
+    post:
+      tags:
+      - Session
+      description: Update the handle from service
+      responses:
+        200:
+          description: OK
+          content: {}
 
   /examples/{id}:
     get:
@@ -155,12 +206,44 @@ paths:
           content: {}
 components:
   schemas:
-    ExampleBody:
-      title: example
-      required:
-      - name
+    VCBody:
       type: object
       properties:
-        name:
+        sub:
           type: string
-          example: no_stress
+        status:
+          type: string
+        verification:
+          type: object
+        claims:
+          type: object
+      example:
+        sub: 68f81aa8-48dc-11ec-81d3-0242ac130003
+        status: FINISHED
+        metadata:
+          source: 'manual-insert'
+          document: 'driving_permit'
+        verification:
+          evidence:
+            - verifier:
+                organization: Passbase
+                txn: da56c2e3-db5a-42b3-a14a-e33e12452512
+              document:
+                type: driving_permit
+                issuer:
+                  name: CITY OF WOLLU
+                number: '00339/11/2661'
+                date_of_issuance: '2011-07-12'
+                date_of_expiry: '2033-01-19'
+              type: id_document
+              method: uripp
+              time: '2020-06-07T08:23:59.763Z'
+          trust_framework:
+          time: '2020-06-07T08:23:59.763Z'
+          verification_process: da56c2e3-db5a-42b3-a14a-e33e12452512
+        claims:
+          given_name: JOE
+          family_name: DOE
+          birthdate: '1992-06-20'
+
+

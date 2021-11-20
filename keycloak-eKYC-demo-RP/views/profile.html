@@ -12,12 +12,14 @@
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,300,700&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css">
     <link href="static/css/bootstrap.css" rel="stylesheet">
     <link href="static/css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.7/jsoneditor.css" integrity="sha512-Sbn0ZCJ/Sq+RcpmI2np6vYlQBolmDPIrx95V3kOQU7RfEOWRCgEmDvj5lD4oNnx55KVIUfadYs8rk3OudD+dFA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular-route.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.7/jsoneditor.min.js" integrity="sha512-AZMllTAUq+DfrIKphpa5ppBD0mZy08Orh+fDJiTYk5c6vw19I3ibbXduFt42BUQqYhKQXEVA+QLAZWw9YlO0Dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!--<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>-->
 
@@ -26,7 +28,12 @@
     <script src="/src/js/html5shiv.js"></script>
     <![endif]-->
 
-
+    <style type="text/css">
+        #jsoneditor {
+            width: 700px;
+            height: 700px;
+        }
+    </style>
 
 </head>
 
@@ -60,10 +67,10 @@
                     <pre id="claims" ></pre>
                 </div>
             </div>
-            <div id="vcClaimsGroup" class="form-group" style="display: none">
-                <label for="claims" class="col-sm-2 control-label">Verified Claims</label>
+            <div class="form-group">
+                <label for="jwt" class="col-sm-2 control-label">Decoded JWT</label>
                 <div class="col-sm-10">
-                    <pre id="vcClaims" ></pre>
+                    <pre id="jwt" ></pre>
                 </div>
             </div>
         </form>
@@ -73,10 +80,15 @@
                 <button type="button"  onclick="getUserInfo()"  class="btn btn-info">Refresh user info</button>
                 <button type="button"  onclick="requestVc('any')"  class="btn btn-info">Verify User Data</button>
                 <button type="button"  onclick="requestVc('full')"  class="btn btn-info">Verify Complete User Data</button>
+                <button type="button"  onclick="showEditor()"  class="btn btn-info">Custom claim editor</button>
                 <button type="button"  onclick="location.href='/logout'"  class="btn btn-info">Logout</button>
             </div>
         </div>
 
+        <div id="editor-container" class="row" style="display: none">
+            <div id="jsoneditor"></div>
+            <button type="button"  onclick="requestCustomClaims()"  class="btn btn-info">Send custom claim request</button>
+        </div>
     </div>
 
     <hr>
@@ -95,19 +107,76 @@
                 success: (data) => {
                     var parsedData = JSON.parse(data)
                     $("#username").text(parsedData.sub)
-                    if(parsedData.verified_claims) {
-                        $("#vcClaims").text(JSON.stringify(parsedData.verified_claims, null, 2))
-                        $("#vcClaimsGroup").css("display", "block")
-                        delete parsedData.verified_claims
-                    }
-                    $("#claims").text(JSON.stringify(parsedData, null, 2))
+                    $("#claims").text(data)
+                }
+            });
+        }
+        function getJwt() {
+            $.ajax({
+                type: "GET",
+                url: "/jwt",
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: (data) => {
+                    $("#jwt").text(data)
                 }
             });
         }
         function requestVc(type) {
             window.location = "/login/"+type
         }
+
+        function showEditor(){
+            document.getElementById('editor-container').style.display = "block";
+        }
         getUserInfo()
+        getJwt()
+
+        // create the editor
+        const container = document.getElementById('jsoneditor')
+        const options = {}
+        const editor = new JSONEditor(container, options)
+
+        function requestCustomClaims(){
+                const json = editor.get()
+               let claims = encodeURIComponent(JSON.stringify(json))
+            window.location = "/custom/login?claims="+claims
+        }
+            const json = {
+                "userinfo": {
+                    "verified_claims": {
+                        "verification": {
+                            "trust_framework": {
+                                "value": "de_aml"
+                            },
+                            "evidence": [
+                                {
+                                    "type": {
+                                        "value": "id_document"
+                                    },
+                                    "method": {
+                                        "value": "pipp"
+                                    },
+                                    "document": {
+                                        "type": {
+                                            "values": [
+                                                "idcard",
+                                                "passport"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "claims": {
+                            "given_name": null,
+                            "address": null
+                        }
+                    }
+                }
+            }
+            editor.set(json)
     </script>
 
 </div> <!-- /container -->

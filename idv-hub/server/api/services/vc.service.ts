@@ -11,6 +11,11 @@ export class VcService {
             .then(db => db.collection(this.COLLECTION).find({sub: sub, status: {$ne: "pending"}}).toArray())
     }
 
+    getBySessionId(sessionId: string): Promise<any> {
+        return new DbClient().connect()
+            .then(db => db.collection(this.COLLECTION).findOne({sessionId: sessionId, status: {$ne: "pending"}}))
+    }
+
     deleteById(id: string): Promise<any> {
         return new DbClient().connect()
             .then(db => db.collection(this.COLLECTION).deleteOne({_id: new ObjectID(id)}))
@@ -111,7 +116,8 @@ export class VcService {
     private matchPathsWithObject(requestedPaths: any, target: any): any {
         let result = true;
         let build = {}
-        for (const [key, value] of Object.entries(requestedPaths)) {
+        let requestedPathsWIthMergedValues = this.mergeValues(requestedPaths)
+        for (const [key, value] of Object.entries(requestedPathsWIthMergedValues)) {
             let lastNode = key.split(".").pop()
             let copyKey = key.replace("." + lastNode, "")
             switch (lastNode) {
@@ -119,10 +125,17 @@ export class VcService {
                     if (!this.matchValue(key, value, target)) {
                         return null
                     }
-                    ;
                     break;
                 case "values":
+                    if (!this.matchValues(key, <string[]>value, target)) {
+                        return null
+                    }
+                    break;
                 case "max_age":
+                    if (!this.matchMAxAge(key, value, target)) {
+                        return null
+                    }
+                    break;
                 default:
                     copyKey = key;
                     break;
@@ -132,10 +145,41 @@ export class VcService {
         return build;
     }
 
+    private mergeValues(requestedPaths: any){
+        let result ={}
+        for (var key of Object.keys(requestedPaths)){
+            if(key.endsWith("]")){
+                let simpleKey = key.slice(0, -3);
+                if(simpleKey in result){
+                    result[simpleKey].push(requestedPaths[key])
+                }else{
+                    result[simpleKey] = [requestedPaths[key]]
+                }
+            }else{
+                result[key] = requestedPaths[key]
+            }
+        }
+        return result;
+    }
+
+    private matchValues(key: string, values: string[], vc: any): boolean {
+        let path = key.slice(0, -7)
+        let vcValue = dot.pick(path, vc)
+        return  values.includes(vcValue);
+    }
+
     private matchValue(key: string, value: any, vc: any): boolean {
         let path = key.slice(0, -6)
         let vcValue = dot.pick(path, vc)
         return vcValue === value;
+    }
+
+    private matchMAxAge(key: string, value: any, vc: any): boolean {
+        let path = key.slice(0, -8)
+        let vcValue = dot.pick(path, vc)
+        var vcTime = Date.parse(vcValue) /1000;
+        var timeNow = new Date().getTime() / 1000;
+        return timeNow - vcTime < value;
     }
 
 }

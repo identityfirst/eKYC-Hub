@@ -3,17 +3,34 @@ import {DocumentType, EvidenceBuilder, EvidenceType, Method} from '../builders/e
 import {ClaimKeys} from "../common/enums";
 import axios, {AxiosResponse} from "axios";
 import log from "../../common/logger";
+import {eKycService} from "./ekyc.service"
 
 
 
 import {FieldMapping} from "../common/field.mapping";
+import FetchingVcError from "../errors/FetchingVcError";
 
-export class PassbaseService {
+export class PassbaseService implements eKycService{
 
-    private  docTypePath: string = "documents[0].document_type"
+    private  docTypePath: string = "authentication_document.type"
     private  logName : string = "PassbaseService"
     private  serviceName : string = "passbase"
     private  secretKey : string = process.env.PASSBASE_SECRET_KEY
+
+    isApplicable(serviceName: string): boolean{
+        return serviceName === this.serviceName
+    }
+
+    getVcFromService(key: string): any{
+        return this.getDataFromPassbase(key)
+            .then(body => this.translate(body.data))
+            .catch(error => {
+                if (error.response && error.response.status == 404) {
+                    throw new FetchingVcError(error.message)
+                }else {
+                    throw error;
+                }})
+    }
 
     translate(body: any): any {
         log.info(body)

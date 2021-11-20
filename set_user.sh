@@ -30,3 +30,4 @@ curl --location --request POST "http://$IDP_HOST:8080/auth/admin/realms/demo/use
 
 USER_ID=$(curl --location --request GET "http://$IDP_HOST:8080/auth/admin/realms/demo/users?username=test" \
 --header "Authorization: Bearer $ACCESS_TOKEN" | jq -r ".[0].id")
+echo "USER_ID: $USER_ID"

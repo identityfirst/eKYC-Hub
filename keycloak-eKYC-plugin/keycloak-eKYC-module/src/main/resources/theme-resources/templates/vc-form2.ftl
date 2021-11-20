@@ -18,14 +18,24 @@
         <table style="width: 100%;table-layout: fixed;word-wrap: break-word; border-collapse: separate;border-spacing: 0 20px;" >
             <div >
             <tr ng-repeat="(key, value) in claims">
-                <td> {{value.selected.value}} </br>
-                    <p style="font-size: 10px">{{ mapClaimName(key) }}</p>
-                </td>
-                <td>
-                    <select ng-options="v as getSourceOption(v) for v in value.options "
-                            ng-model="value.selected"
-                            ng-init="value.selected = value.options[0]">
-                    </select>
+                <td style="display: flex; flex-direction: column">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div>
+                            {{value.selected.value}} </br>
+                            <span style="font-size: 10px">{{ mapClaimName(key) }}</span> </br>
+
+                        </div>
+                        <div>
+                            <select ng-options="v as getSourceOption(v) for v in value.options "
+                                    ng-model="value.selected"
+                                    ng-init="value.selected = value.options[0]">
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Purpose: {{value.purpose}}</span>
+                    </div>
+
                 </td>
             </tr>
             </div>
@@ -47,12 +57,14 @@
     <script>
         var app = angular.module("vcApp", []);
         app.controller('vcCtrl', function($scope, $http) {
+            var claimPurposes = JSON.parse('${claimPurposes}'.split("&quot;").join('"'))
             var vcs = JSON.parse('${vcs}'.split("&quot;").join('"'))
             claims = {}
             vcs.forEach(vc =>{
                 if(!claims[vc.name]){
                     claims[vc.name]={
                         options: [],
+                        purpose: claimPurposes[vc.name] || "Not provided"
                     }
                 }
                 claims[vc.name].options.push(vc)
@@ -90,7 +102,14 @@
             $scope.claimNames = {
                 birthdate: "Date of birth",
                 family_name: "Family name",
-                given_name: "Given names"
+                given_name: "Given names",
+                place_of_birth: "Place of birth",
+                nationalities: "Nationalities",
+                birth_family_name: "Birth family name",
+                birth_given_name: "Birth given name",
+                birth_middle_name: "Birth middle name",
+                salutation: "Salutation",
+                title: "Title",
             }
 
             $scope.getSourceOption = function (vc) {
@@ -99,7 +118,11 @@
             $scope.documentType = {
                 driving_permit: "Driving License",
                 idcard: "ID Card",
-                passport: "Passport"
+                passport: "Passport",
+                residence_permit: "Resident Permit",
+                bank_statement: "Bank Statement",
+                utility_statement: "Utility Statement",
+                mortgage_statement: "Mortgage Statement"
             }
         });
 

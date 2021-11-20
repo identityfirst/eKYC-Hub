@@ -1,0 +1,28 @@
+{
+  "userinfo": {
+    "verified_claims": {
+      "verification": {
+        "trust_framework": null,
+        "time": null,
+        "evidence": [
+          {
+            "type": null,
+            "method": null,
+            "document": {
+              "type": {
+                "values": [
+                  "idcard",
+                  "passport",
+                  "driving_permit"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "claims": {
+        "birthdate": null
+      }
+    }
+  }
+}

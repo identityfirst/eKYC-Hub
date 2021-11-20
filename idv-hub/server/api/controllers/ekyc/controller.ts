@@ -3,10 +3,9 @@ import {PassbaseService} from "../../services/passbase.service";
 import {VcService} from "../../services/vc.service";
 
 export class Controller {
-    fetchFromPassbase(req: any, res: Response): void {
+    fetchFromPassbase(req: any, res: Response): Promise<any> {
 
-        new PassbaseService().getDataFromPassbase(req.params.key)
-            .then(response => new PassbaseService().translate(response.data))
+        return new PassbaseService().getVcFromService(req.params.key)
             .then(vc => {
                 vc.sub = req.session.user.id_token_claims.sub
                 return vc
@@ -66,6 +65,11 @@ export class Controller {
     getVcs(req: any, res: Response): void {
         new VcService().getBySub(req.params.sub)
             .then((data) => res.send(data))
+    };
+
+    postVcs(req: any, res: Response): void {
+        new VcService().save(req.body)
+            .then(() => res.sendStatus(200))
     };
 
     getPendingVcs(req: any, res: Response): void {

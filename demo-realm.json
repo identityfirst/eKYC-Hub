@@ -291,6 +291,7 @@
       "redirectUris": [
         "http://172.17.0.1:3000/cb",
         "http://demo-rp:3000/cb",
+        "http://demo-rp.identityfirst.tech:3000/cb",
         "http://localhost:3000/cb"
       ],
       "webOrigins": [],
@@ -351,6 +352,7 @@
         "http://172.17.0.1:5000/api/v2/oidc/cb",
         "http://idv-hub:5000/api/v2/oidc/cb",
         "https://idv-hub:5443/api/v2/oidc/cb",
+        "https://idv-hub.identityfirst.tech:5443/api/v2/oidc/cb",
         "http://localhost:5000/api/v2/oidc/cb"
       ],
       "webOrigins": [],
@@ -1028,7 +1030,7 @@
     "xContentTypeOptions": "nosniff",
     "xRobotsTag": "none",
     "xFrameOptions": "SAMEORIGIN",
-    "contentSecurityPolicy": "frame-src 'self' http://keycloak-ekyc:8080 https://idv-hub:5443 http://172.17.0.1:8080 http://172.17.0.1:5000 http://localhost:5000 https://button.passbase.com; frame-ancestors 'self'; object-src 'none';",
+    "contentSecurityPolicy": "frame-src 'self' http://keycloak-ekyc:8080 https://idv-hub.identityfirst.tech:5443 https://idv-hub:5443 http://172.17.0.1:8080 http://172.17.0.1:5000 http://localhost:5000 https://button.passbase.com; frame-ancestors 'self'; object-src 'none';",
     "xXSSProtection": "1; mode=block",
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
@@ -1421,13 +1423,6 @@
           "authenticator": "conditional-verified-claims",
           "requirement": "REQUIRED",
           "priority": 0,
-          "userSetupAllowed": false,
-          "autheticatorFlow": false
-        },
-        {
-          "authenticator": "webauthn-authenticator",
-          "requirement": "REQUIRED",
-          "priority": 1,
           "userSetupAllowed": false,
           "autheticatorFlow": false
         },

@@ -62,6 +62,15 @@ app.get('/login/:claim', (req, res) => {
         .then(client => client.authorizationUrl(authorizationUrlConfig(claims[req.params.claim])))
         .then(url => res.redirect(url))
 })
+
+app.get('/custom/login', (req, res) => {
+    let claims = JSON.parse(req.query.claims)
+    console.log(idpUrl)
+    Issuer.discover(idpUrl)
+        .then(issuer => new issuer.Client(clientConfig))
+        .then(client => client.authorizationUrl(authorizationUrlConfig(claims)))
+        .then(url => res.redirect(url))
+})
 app.get('/cb', (req, res) => {
     var client
     Issuer.discover(idpUrl)
@@ -83,6 +92,10 @@ app.get('/info',isAuthenticated, (req, res) => {
         .then(client => client.userinfo(req.session.user.access_token))
         .then((user_info)=>req.session.user.user_info = user_info)
         .then(()=>res.end(JSON.stringify(req.session.user.user_info, null, 2)))
+})
+
+app.get('/jwt',isAuthenticated, (req, res) => {
+    res.end(JSON.stringify(req.session.user.id_token_claims, null, 2))
 })
 
 app.get('/', (req, res) => {

@@ -13,7 +13,7 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_IMPORT=/tmp/demo-realm.json
-      - GET_VC_ENDPOINT=http://idv-hub:5000/api/v1/idp/vc
+      - IDV_URL=http://idv-hub:5000
       - DEBUG=true
       - DEBUG_PORT=*:8787
     volumes:

@@ -1,12 +1,18 @@
-FROM node:lts
+FROM node:14-buster
 
+
+
+COPY . /app
 WORKDIR /app
-
-COPY . /app/
 #COPY package.json /app/package.json
-COPY node_modules /app/node_modules
-RUN  npm install && npm install typescript ts-node
-RUN  npm run compile
+#COPY node_modules /app/node_modules
+RUN  npm install && npm install typescript ts-node && npm run compile
+#RUN mkdir /app
+#RUN cp -R /tmp/dist /app
+#RUN cp -R /tmp/node_modules /app
+#RUN cp -R /tmp/public /app
+#RUN cp -R /tmp/private /app
+
 
 ENV APP_ID=idv-hub
 ENV PORT=5000
@@ -30,4 +36,4 @@ ENV MONGO_URL="mongodb://localhost:27017"
 ENV MONGO_DB="ekyc"
 
 
-CMD ["npm", "run", "start"]
+CMD ["node","dist/index.js"]

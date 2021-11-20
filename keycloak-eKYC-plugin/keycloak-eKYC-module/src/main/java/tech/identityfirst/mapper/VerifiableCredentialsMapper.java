@@ -15,14 +15,11 @@ import org.keycloak.models.UserSessionModel;
 import org.keycloak.protocol.oidc.mappers.*;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import tech.identityfirst.authenticatorforms.VerifiableCredentialSelection;
-import tech.identityfirst.models.vc.representation.OIDCVerifiedClaims;
-import tech.identityfirst.models.vc.representation.VerifiedClaims;
 
-import javax.management.ObjectName;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -88,19 +85,42 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
         return "Maps verifiable credentials";
     }
 
+    @SneakyThrows
+    @Override
+    public IDToken transformIDToken(IDToken token, ProtocolMapperModel mappingModel, KeycloakSession session,
+                                    UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
+        Map<String,String> notes = userSession.getNotes();
+        if(isNotVcFlow(notes)){
+            return token;
+        }
+
+        List<JsonNode> resultClaims = getResultClaims(notes);
+        log.info("Result claims "+ mapper.writeValueAsString(resultClaims));
+        token.getOtherClaims().put("verified_claims", resultClaims);
+        return token;
+    }
 
     @SneakyThrows
     @Override
     public AccessToken transformUserInfoToken(AccessToken token, ProtocolMapperModel mappingModel, KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
 
         Map<String,String> notes = userSession.getNotes();
-
-
-        if(!Boolean.valueOf(notes.get("vc")) || notes.get("selectedVcs") == null
-                || notes.get("availableVcs") == null || notes.get("selectionVcs") == null){
+        if(isNotVcFlow(notes)){
             return token;
         }
 
+        List<JsonNode> resultClaims = getResultClaims(notes);
+        log.info("Result claims "+ mapper.writeValueAsString(resultClaims));
+        token.getOtherClaims().put("verified_claims", resultClaims);
+        return token;
+    }
+
+    private boolean isNotVcFlow(Map<String,String> notes){
+        return !Boolean.valueOf(notes.get("vc")) || notes.get("selectedVcs") == null
+                || notes.get("availableVcs") == null || notes.get("selectionVcs") == null;
+    }
+
+    private List<JsonNode> getResultClaims(Map<String, String> notes) throws JsonProcessingException {
         List<String> selectedIds = this.getListFromNotes(notes,"selectedVcs",String.class);
         List<JsonNode> availableVcs = this.getListFromNotes(notes,"availableVcs",JsonNode.class);
         List<VerifiableCredentialSelection> selectionVcs = this.getListFromNotes(notes,"selectionVcs",VerifiableCredentialSelection.class);
@@ -108,7 +128,6 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
         log.info("SelectedIds "+ mapper.writeValueAsString(selectedIds));
         log.info("AvailableVcs "+ mapper.writeValueAsString(availableVcs));
         log.info("selectionVcs "+ mapper.writeValueAsString(selectionVcs));
-
 
         Map<String,List<VerifiableCredentialSelection>> selectedVcs =
                 selectionVcs.stream()
@@ -119,10 +138,7 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
                 .filter(avc -> selectedVcs.keySet().contains(avc.get("id").asText()))
                 .map(avc -> mapSelectedClaims(avc,selectedVcs.get(avc.get("id").asText())))
                 .collect(Collectors.toList());
-
-        log.info("Result claims "+ mapper.writeValueAsString(resultClaims));
-        token.getOtherClaims().put("verified_claims", resultClaims);
-        return token;
+        return resultClaims;
     }
 
     private JsonNode mapSelectedClaims(JsonNode avc, List<VerifiableCredentialSelection> vcss){

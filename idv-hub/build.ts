@@ -9,3 +9,5 @@ s.mkdir('-p', `${outDir}/common/swagger`);
 s.cp('server/common/api.yml', `${outDir}/common/api.yml`);
 s.cp('-R','server/mappings', `${outDir}/`);
 s.cp('-R','server/schemas', `${outDir}/`);
+s.cp('-R','private', `${outDir}/`);
+s.cp('-R','public', `${outDir}/`);

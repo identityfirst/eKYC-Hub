@@ -20,9 +20,16 @@ claims.any = {
                 ]
             },
             "claims": {
-                "given_name": null,
-                "family_name": null,
-                "birthdate": null
+                "given_name":{
+                    "essential":true,
+                    "purpose":"To make communication look more personal"
+                },
+                "family_name":{
+                    "essential":true
+                },
+                "birthdate":{
+                    "purpose":"To send you best wishes on your birthday"
+                }
             }
         }
     }

@@ -2,11 +2,14 @@ package tech.identityfirst.authenticatorforms;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
 import lombok.extern.jbosslog.JBossLog;
+import org.apache.commons.lang.ObjectUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
+import org.keycloak.common.util.ObjectUtil;
 import org.keycloak.forms.account.freemarker.model.UrlBean;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakUriInfo;
@@ -16,6 +19,7 @@ import org.keycloak.theme.Theme;
 import tech.identityfirst.models.vc.representation.VerifiedClaims;
 import tech.identityfirst.services.VerifiableCredentialsService;
 
+import javax.json.Json;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -24,6 +28,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -46,10 +51,12 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
     public void authenticate(AuthenticationFlowContext context) {
 
         String claims = session.getContext().getAuthenticationSession().getClientNote("claims");
+
         if(claims == null){
             context.success();
             return;
         }
+        Map<String,String> claimPurposes = getClaimsPurposes(claims);
         String purpose = session.getContext().getAuthenticationSession().getClientNote("client_request_param_purpose");
         String userId = session.getContext().getAuthenticationSession().getAuthenticatedUser().getId();
         VerifiableCredentialsService vcService = new VerifiableCredentialsService(session);
@@ -69,6 +76,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                 .setAttribute("username", context.getAuthenticationSession().getAuthenticatedUser().getUsername())
                 .setAttribute("appName", context.getAuthenticationSession().getClient().getName())
                 .setAttribute("purpose", purpose)
+                .setAttribute("claimPurposes", objectMapper.writeValueAsString(claimPurposes))
                 .setAttribute("vcs",objectMapper.writeValueAsString(selectionVcs))
                 .setAttribute("accountUrl", urlBean.getAccountUrl())
                 .setAttribute("notEnoughError", vcs.isEmpty())
@@ -96,6 +104,21 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                 baseQueryUri,
                 uriInfo.getRequestUri(),
                 null);
+    }
+
+    private Map<String,String> getClaimsPurposes(String claims){
+        Map<String,String> result = new HashMap<>();
+        Map<String, Object> purposes =
+                JsonPath.parse(claims).read("$.userinfo.verified_claims.claims", Map.class);
+        for(Map.Entry<String,Object> entry : purposes.entrySet()){
+            if(entry != null) {
+                Map<String, Object> claim = (Map<String, Object>) entry.getValue();
+                if (claim.containsKey("purpose")) {
+                    result.put(entry.getKey(), (String) claim.get("purpose"));
+                }
+            }
+        }
+        return result;
     }
 
     private List<VerifiableCredentialSelection> getSelectionList(JsonNode vc){
