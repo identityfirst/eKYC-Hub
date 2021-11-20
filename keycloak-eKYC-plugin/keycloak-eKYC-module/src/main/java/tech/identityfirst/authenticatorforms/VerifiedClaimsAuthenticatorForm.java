@@ -113,7 +113,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         for(Map.Entry<String,Object> entry : purposes.entrySet()){
             if(entry != null) {
                 Map<String, Object> claim = (Map<String, Object>) entry.getValue();
-                if (claim.containsKey("purpose")) {
+                if (claim !=null && claim.containsKey("purpose")) {
                     result.put(entry.getKey(), (String) claim.get("purpose"));
                 }
             }
