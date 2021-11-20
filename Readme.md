@@ -1,6 +1,6 @@
 # eKYC Hub
 This repository provides code for eKYC Hub application. The eKYC Hub implements the eKYC OIDC specification
-[OpenID Connect for Identity Assurance 1.0](https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID2.html) and allows 
+[OpenID Connect for Identity Assurance 1.0](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html) and allows 
 for the integration with eKYC data providers (verification services).
 
 The code mainly provides the following:
@@ -28,14 +28,14 @@ Below you can find instructions on how to setup the demo:
 Install jq (only for set_user script)
 
 Put domain mapping in you hosts file:
-```aidl
+```
 127.0.0.1       idv-hub
 127.0.0.1       demo-rp
 127.0.0.1       keycloak-ekyc
 ```
 
 Create .env file
-```aidl
+```
 PASSBASE_SECRET_KEY=<SECRET_KEY>
 PASSBASE_PUBLIC_KEY=<PUBLIC_KEY>
 ```
@@ -43,17 +43,17 @@ PASSBASE_PUBLIC_KEY=<PUBLIC_KEY>
 Note: You will need to register at Passbase and obtain a public key and a secret in order to integrate the current version of eKYC Hub.
 
 Init SSL certificates:
-```aidl
+```
 ./gen_key_pair.sh.sh
 ```
 
 To start, run
-```aidl
+```
 docker-compose up
 ```
 
 Init user in IDP:
-```aidl
+```
 ./set_user.sh
 ```
 
@@ -68,4 +68,4 @@ User credentials: test/test123
 3. Trigger verification with Provider
 
 # Note
-The [OpenID Connect for Identity Assurance 1.0](https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID2.html) specification is constantly evolving and e will make our best effort to keep the code up to date. However, there may be some differences between the current version of the spec and the code available in this repo - if you see one, we would welcome a pull request!
+The eKYC Hub has been developed to be compliant with the [OpenID Connect for Identity Assurance 1.0](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html) specification. The framework will undergo compliance checks and interop activities by end of 2021. Should there be any differences with the specfication, we will make best effort to update the framework to be fully compliant. Check this repository as well as [Identity First Tech](https://identityfirst.tech) website for more information. Also, we would welcome a pull request!

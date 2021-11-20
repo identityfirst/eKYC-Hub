@@ -25,7 +25,7 @@ var authorizationUrlConfig= (claim)=>{
     return{
         scope: scopes,
         claims: claim,
-        purpose: "Sign in to finance application",
+        purpose: "Sign in to eKYC Relying Party application",
         prompt: "login"
     }
 }
@@ -71,6 +71,7 @@ app.get('/custom/login', (req, res) => {
         .then(client => client.authorizationUrl(authorizationUrlConfig(claims)))
         .then(url => res.redirect(url))
 })
+
 app.get('/cb', (req, res) => {
     var client
     Issuer.discover(idpUrl)

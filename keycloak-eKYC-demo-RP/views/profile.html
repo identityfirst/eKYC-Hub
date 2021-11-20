@@ -4,9 +4,9 @@
 <head>
     <!--<base href="/">-->
     <meta charset="utf-8">
-    <title>Finance Demo - Home Page</title>
+    <title>eKYC Relying Party Demo - Home Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Finance Demo Application">
+    <meta name="description" content="eKYC Relying Party Demo Application">
 
     <!-- Le styles -->
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,300,700&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css">
@@ -45,7 +45,7 @@
             <li class="active"><a href="/">Home</a></li>
             <li><a href="#" target="_blank">Contact</a></li>
         </ul>
-        <h1>Finance Demo</h1>
+        <h1>eKYC Relying Party Demo</h1>
     </div>
 
     <hr>
@@ -77,10 +77,10 @@
 
         <div class="row">
             <div class="col-md-10 text-right">
-                <button type="button"  onclick="getUserInfo()"  class="btn btn-info">Refresh user info</button>
+                <button type="button"  onclick="getUserInfo()"  class="btn btn-info">Refresh User Info</button>
                 <button type="button"  onclick="requestVc('any')"  class="btn btn-info">Verify User Data</button>
                 <button type="button"  onclick="requestVc('full')"  class="btn btn-info">Verify Complete User Data</button>
-                <button type="button"  onclick="showEditor()"  class="btn btn-info">Custom claim editor</button>
+                <button type="button"  onclick="showEditor()"  class="btn btn-info">Custom Claim Editor</button>
                 <button type="button"  onclick="location.href='/logout'"  class="btn btn-info">Logout</button>
             </div>
         </div>
@@ -94,8 +94,9 @@
     <hr>
 
     <div class="footer row">
-        <div class="col-md-6">&copy; 2020 Identity First</div>
+        <div class="col-md-6">&copy; 2020 - 2021 Identity First Tech</div>
     </div>
+
     <script>
         function getUserInfo() {
             $.ajax({
@@ -130,6 +131,7 @@
         function showEditor(){
             document.getElementById('editor-container').style.display = "block";
         }
+
         getUserInfo()
         getJwt()
 
@@ -144,34 +146,35 @@
             window.location = "/custom/login?claims="+claims
         }
             const json = {
-                "userinfo": {
+                userinfo: {
                     "verified_claims": {
                         "verification": {
-                            "trust_framework": {
-                                "value": "de_aml"
-                            },
+                            "trust_framework":null,
                             "evidence": [
                                 {
                                     "type": {
                                         "value": "id_document"
                                     },
                                     "method": {
-                                        "value": "pipp"
+                                        "value": "uripp"
                                     },
                                     "document": {
-                                        "type": {
-                                            "values": [
-                                                "idcard",
-                                                "passport"
-                                            ]
-                                        }
+                                        "type": null
                                     }
                                 }
                             ]
                         },
                         "claims": {
-                            "given_name": null,
-                            "address": null
+                            "given_name":{
+                                "essential":true,
+                                "purpose":"To make communication look more personal"
+                            },
+                            "family_name":{
+                                "essential":true
+                            },
+                            "birthdate":{
+                                "purpose":"To send you best wishes on your birthday"
+                            }
                         }
                     }
                 }
