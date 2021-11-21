@@ -61,6 +61,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         String userId = session.getContext().getAuthenticationSession().getAuthenticatedUser().getId();
         VerifiableCredentialsService vcService = new VerifiableCredentialsService(session);
         List<JsonNode> vcs = vcService.getFilteredVerifiableCredentialsByUserId(userId,claims);
+        log.info(String.format("Received %d vcs from idv hub",vcs.size()));
 
 
 

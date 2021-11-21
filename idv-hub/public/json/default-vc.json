@@ -1,0 +1,38 @@
+{
+  "sub": "f9837923-01c8-41d3-a881-686121ec2e1b",
+  "status": "FINISHED",
+  "metadata": {
+    "source": "manual-insert",
+    "document": "driving license"
+  },
+  "verification": {
+    "evidence": [
+      {
+        "verifier": {
+          "organization": "Passbase",
+          "txn": "da56c2e3-db5a-42b3-a14a-e33e12452512"
+        },
+        "document": {
+          "type": "driving_permit",
+          "issuer": {
+            "name": "CITY OF WOLLU"
+          },
+          "number": "00339/11/2661",
+          "date_of_issuance": "2011-07-12",
+          "date_of_expiry": "2033-01-19"
+        },
+        "type": "id_document",
+        "method": "uripp",
+        "time": "2020-06-07T08:23:59.763Z"
+      }
+    ],
+    "trust_framework": null,
+    "time": "2020-06-07T08:23:59.763Z",
+    "verification_process": "da56c2e3-db5a-42b3-a14a-e33e12452512"
+  },
+  "claims": {
+    "given_name": "JOE",
+    "family_name": "DOE",
+    "birthdate": "1992-06-20"
+  }
+}

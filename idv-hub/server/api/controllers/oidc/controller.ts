@@ -41,7 +41,11 @@ export class Controller {
     };
 
     account(req: any, res: Response): void {
-        res.send({username: req.session.user.id_token_claims.email})
+        res.send({
+            username: req.session.user.id_token_claims.email,
+            sub: req.session.user.id_token_claims.sub
+
+        })
     };
 
 }

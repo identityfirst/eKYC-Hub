@@ -93,7 +93,7 @@
             var content = document.getElementsByClassName("content-area")[0];
             content.innerHTML = '';
             var ifrm = document.createElement("iframe");
-            ifrm.setAttribute("src", "https://idv-hub:5443/api/v2/oidc/login");
+            ifrm.setAttribute("src", "${properties.idvUrl}/api/v2/oidc/login");
             ifrm.style.width = "100%";
             ifrm.style.height = "1200px";
             ifrm.frameBorder = "0";

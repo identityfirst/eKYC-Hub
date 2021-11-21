@@ -148,6 +148,7 @@ export class Controller {
         vcs.forEach(vc => {
             let result = vcService.getVerifiedClaimsMatchingRequest(vc, requestedVc)
             if (result) {
+                console.log("Matching vc found")
                 result.metadata = vc.metadata
                 result.id = vc._id
                 filtered.push(result)

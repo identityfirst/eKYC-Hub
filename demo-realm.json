@@ -1877,7 +1877,7 @@
       "name": "Webauthn Register",
       "providerId": "webauthn-register",
       "enabled": true,
-      "defaultAction": true,
+      "defaultAction": false,
       "priority": 1001,
       "config": {}
     }

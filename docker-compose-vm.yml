@@ -14,6 +14,7 @@ services:
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_IMPORT=/tmp/demo-realm.json
       - IDV_URL=http://idv-hub:5000
+      - IDV_HTTPS_URL=https://idv-hub.identityfirst.tech:5443
       - DEBUG=true
       - DEBUG_PORT=*:8787
     volumes:

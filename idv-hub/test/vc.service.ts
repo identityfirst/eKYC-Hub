@@ -38,6 +38,10 @@ describe('Verification matching test', () => {
         runMathingTest('./vcs/drivinglicense.json','./inputs/request_essential_ok.json', './expected/response_essential_ok.json')
     });
 
+    it('should fail translate driving license [mix]', () =>{
+        runMathingTest('./vcs/drivinglicense.json','./inputs/request_mix_fail.json', './expected/null.json')
+    });
+
     function runMathingTest(vcFile,inputFile,expectedFile){
         var request = JSON.parse(fs.readFileSync(path.resolve(__dirname, inputFile), 'utf8'));
         var vc = JSON.parse(fs.readFileSync(path.resolve(__dirname, vcFile), 'utf8'));
