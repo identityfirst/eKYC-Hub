@@ -41,7 +41,8 @@
             </div>
         </table>
         <#if notEnoughError>
-                <p class="alert alert-danger">You don't have enough claims. Please add.</p>
+                <p class="alert alert-danger">The claims requested by the Relying Party do not match the claims you store in your account. You may need to add new claims or use other verification methods for the existing claims to meet requirements of the Relying Party.
+                </p>
         </#if>
         <p>Purpose for access:</p>
         <p><b>{{ purpose }}</b></p>

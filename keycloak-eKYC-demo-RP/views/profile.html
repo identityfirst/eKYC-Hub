@@ -87,6 +87,7 @@
 
         <div id="editor-container" class="row" style="display: none">
             <div id="jsoneditor"></div>
+            <div id="onValidationOutput"></div>
             <button type="button"  onclick="requestCustomClaims()"  class="btn btn-info">Send custom claim request</button>
         </div>
     </div>
@@ -136,50 +137,57 @@
         getJwt()
 
         // create the editor
-        const container = document.getElementById('jsoneditor')
-        const options = {}
-        const editor = new JSONEditor(container, options)
+
+
+        function getRequestSchema() {
+            return $.ajax({
+                url: "static/json/verified_claims_request-10.json",
+                dataType: "json",
+                success: function (response) {
+                    return response
+                }
+            });
+        }
+
+        function getDefaultRequest() {
+            return $.ajax({
+                url: "static/json/default_request.json",
+                dataType: "json",
+                success: function (response) {
+                    return response
+                }
+            });
+        }
+
+        var editor
 
         function requestCustomClaims(){
-                const json = editor.get()
-               let claims = encodeURIComponent(JSON.stringify(json))
+            const json = editor.get()
+            let claims = encodeURIComponent(JSON.stringify(json))
             window.location = "/custom/login?claims="+claims
         }
-            const json = {
-                userinfo: {
-                    "verified_claims": {
-                        "verification": {
-                            "trust_framework":null,
-                            "evidence": [
-                                {
-                                    "type": {
-                                        "value": "id_document"
-                                    },
-                                    "method": {
-                                        "value": "uripp"
-                                    },
-                                    "document": {
-                                        "type": null
-                                    }
-                                }
-                            ]
-                        },
-                        "claims": {
-                            "given_name":{
-                                "essential":true,
-                                "purpose":"To make communication look more personal"
-                            },
-                            "family_name":{
-                                "essential":true
-                            },
-                            "birthdate":{
-                                "purpose":"To send you best wishes on your birthday"
-                            }
-                        }
+
+        $.when(getRequestSchema(),getDefaultRequest()).done(function(schemaResponse, defaultRequest){
+            const container = document.getElementById('jsoneditor')
+            const options = {
+                mode: 'tree',
+                modes: ['code', 'text', 'tree', 'preview'],
+                schema:schemaResponse[0],
+                onValidationError: function(errors) {
+                    console.error('onValidationError', errors);
+                    const outputEL = document.getElementById('onValidationOutput')
+                    if(errors.length == 0) {
+                        outputEL.innerHTML = '<span style="color:green">Schema has ' + errors.length + ' errors</span>';
+                    }else{
+                        outputEL.innerHTML = '<span style="color:red">Schema has ' + errors.length + ' errors</span>';
                     }
-                }
+                },
             }
-            editor.set(json)
+            editor = new JSONEditor(container, options)
+            editor.set(defaultRequest[0])
+
+        })
+
     </script>
 
 </div> <!-- /container -->
