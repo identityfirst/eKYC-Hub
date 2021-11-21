@@ -139,6 +139,7 @@
                 .then(response => {
                     $scope.username = response.data.username
                     $scope.sub = response.data.sub
+                    $scope.initJsonEditor();
                 })
         }
         $scope.loadAccount()
@@ -234,7 +235,7 @@
                 })
         }
 
-        $scope.initJsonEditor();
+
 
         $scope.sendDebugVC = function (){
             $http.post('/api/v1/ekyc/vc',$scope.editor.get())
