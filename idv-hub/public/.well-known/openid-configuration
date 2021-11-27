@@ -4,27 +4,38 @@
      "nist_800_63A_ial_2",
      "nist_800_63A_ial_3"
    ],
-   "evidence_supported":[
-      "id_document",
-      "utility_bill",
-      "qes"
-   ],
-   "id_documents_supported":[
-       "idcard",
-       "passport",
-       "driving_permit"
-   ],
-   "id_documents_verification_methods_supported":[
-       "pipp",
-       "sripp",
-       "eid"
-   ],
-   "claims_in_verified_claims_supported":[
-      "given_name",
-      "family_name",
-      "birthdate",
-      "place_of_birth",
-      "nationalities",
-      "address"
-   ]
+   "evidence_supported": [
+         "document",
+         "electronic_record",
+         "vouch",
+         "electronic_signature"
+      ],
+      "documents_supported": [
+          "idcard",
+          "passport",
+          "driving_permit"
+      ],
+      "documents_methods_supported": [
+          "pipp",
+          "sripp",
+          "eid"
+      ],
+      "electronic_records_supported": [
+          "secure_mail"
+      ],
+      "claims_in_verified_claims_supported": [
+         "given_name",
+         "family_name",
+         "birthdate",
+         "place_of_birth",
+         "nationalities",
+         "address"
+      ],
+     "attachments_supported": [
+       "external",
+       "embedded"
+     ],
+     "digest_algorithms_supported": [
+       "sha-256"
+     ]
 }
