@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
 import lombok.extern.jbosslog.JBossLog;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
@@ -75,8 +76,8 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         UrlBean urlBean = getUrlBean(context);
         Response response = context.form()
                 .setAttribute("username", context.getAuthenticationSession().getAuthenticatedUser().getUsername())
-                .setAttribute("appName", context.getAuthenticationSession().getClient().getName())
-                .setAttribute("purpose", purpose)
+                .setAttribute("appName", StringUtils.defaultIfEmpty(context.getAuthenticationSession().getClient().getName(),"Unnamed"))
+                .setAttribute("purpose", StringUtils.defaultIfEmpty(purpose,"Not provided"))
                 .setAttribute("claimPurposes", objectMapper.writeValueAsString(claimPurposes))
                 .setAttribute("vcs",objectMapper.writeValueAsString(selectionVcs))
                 .setAttribute("accountUrl", urlBean.getAccountUrl())
@@ -89,6 +90,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         context.getAuthenticationSession().setUserSessionNote("availableVcs",objectMapper.writeValueAsString(vcs));
         context.challenge(response);
     }
+
 
     private UrlBean getUrlBean(AuthenticationFlowContext context) throws IOException {
         KeycloakUriInfo uriInfo = session.getContext().getUri();

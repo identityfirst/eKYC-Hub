@@ -4,23 +4,28 @@ services:
     build:
       context: keycloak-eKYC-plugin
       dockerfile: Dockerfile
-
+    depends_on:
+      - mysql
     ports:
       - 8080:8080
       - 8787:8787
       - 8443:8443
     environment:
       - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin}
       - KEYCLOAK_IMPORT=/tmp/demo-realm.json
       - IDV_URL=http://idv-hub:5000
       - IDV_HTTPS_URL=https://idv-hub:5443
       - DEBUG=true
       - DEBUG_PORT=*:8787
+      - DB_VENDOR=mysql
+      - DB_ADDRESS=mysql:3306
+      - DB_USER=keycloak
+      - DB_PASSWORD=${MYSQL_USER_PASSWORD:-keycloak}
     volumes:
       - ./demo-realm.json:/tmp/demo-realm.json
-      - ./tls.crt:/etc/x509/https/tls.crt
-      - ./tls.key:/etc/x509/https/tls.key
+      - ${KEYCLOAK_TLS_CERT_PATH:-./tls.crt}:/etc/x509/https/tls.crt
+      - ${KEYCLOAK_TLS_KEY_PATH:-./tls.key}:/etc/x509/https/tls.key
     healthcheck:
       test: "curl -f http://localhost:8080/auth/realms/master/.well-known/openid-configuration || false"
       timeout: 120s
@@ -65,12 +70,29 @@ services:
       - 5000:5000
       - 5443:5443
     volumes:
-      - ./idv-tls.crt:/app/dist/idv-tls.crt
-      - ./idv-tls.key:/app/dist/idv-tls.key
+      - ${IDV_HUB_TLS_CERT_PATH:-./idv-tls.crt}:/app/dist/idv-tls.crt
+      - ${IDV_HUB_TLS_KEY_PATH:-./idv-tls.key}:/app/dist/idv-tls.key
   mongo:
     image: mongo
     environment:
       - MONGO_INITDB_DATABASE=ekyc
+    volumes:
+      - ekycmongo:/data/db
     ports:
       - 27017:27017
 
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_DATABASE=keycloak
+      - MYSQL_USER=keycloak
+      - MYSQL_PASSWORD=${MYSQL_USER_PASSWORD:-keycloak}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-admin}
+    volumes:
+      - ekycmysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+volumes:
+  ekycmysql:
+  ekycmongo:
