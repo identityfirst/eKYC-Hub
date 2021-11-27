@@ -4,7 +4,6 @@ services:
     build:
       context: keycloak-eKYC-plugin
       dockerfile: Dockerfile
-
     ports:
       - 8080:8080
       - 8787:8787
@@ -32,10 +31,15 @@ services:
     - keycloak-ekyc
     environment:
       - IDP_URL=https://keycloak-ekyc:8443
-      - SELF_URL=http://demo-rp:3000
+      - SELF_URL=http://demo-rp:3001
       - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_EKYC}
+      - CLIENT_SECRET=${CLIENT_SECRET_EKYC}
+      - PORT=${PORT_EKYC}
     ports:
-      - 3000:3000
+      - ${PORT_EKYC}:${PORT_EKYC}
+    expose:
+      - ${PORT_EKYC}
   idv-hub:
     build:
       context: idv-hub

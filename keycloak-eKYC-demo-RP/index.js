@@ -8,8 +8,8 @@ const selfHost = process.env.SELF_URL ||'http://172.17.0.1:3000'
 const path = require('path')
 var cors = require('cors');
 const clientConfig = {
-    client_id: 'demo-rp',
-    client_secret: 'secret',
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
     response_types: ['code'],
     redirect_uris: [selfHost+'/cb']
 }
@@ -33,9 +33,8 @@ var authorizationUrlConfig= (claim)=>{
 
 const idpUrl = idpHost+'/auth/realms/demo'
 
-
 const app = express()
-const port = 3000
+const port = process.env.PORT
 
 app.use(session({
     secret: 'keyboard cat',
