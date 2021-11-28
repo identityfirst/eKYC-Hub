@@ -14,8 +14,8 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin}
       - KEYCLOAK_IMPORT=/tmp/demo-realm.json
-      - IDV_URL=http://idv-hub:5000
-      - IDV_HTTPS_URL=https://idv-hub:5443
+      - IDV_URL=http://${IDV_HUB_DOMAIN:-./idv-hub}:5000
+      - IDV_HTTPS_URL=https://${IDV_HUB_DOMAIN:-./idv-hub}:5443
       - DEBUG=true
       - DEBUG_PORT=*:8787
       - DB_VENDOR=mysql
@@ -36,8 +36,8 @@ services:
     depends_on:
     - keycloak-ekyc
     environment:
-      - IDP_URL=https://keycloak-ekyc:8443
-      - SELF_URL=http://demo-rp:3001
+      - IDP_URL=https://${KEYCLOAK_DOMAIN:-./keycloak-ekyc}:8443
+      - SELF_URL=http://${DEMO_RP_DOMAIN:-./demo-rp}:3000
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - CLIENT_ID=${CLIENT_ID_EKYC}
       - CLIENT_SECRET=${CLIENT_SECRET_EKYC}
@@ -63,7 +63,7 @@ services:
       - PASSBASE_SECRET_KEY=${PASSBASE_SECRET_KEY}
       - PASSBASE_PUBLIC_KEY=${PASSBASE_PUBLIC_KEY}
       - SELF_HOST=https://idv-hub:5443
-      - OIDC_IDP_URL=https://keycloak-ekyc:8443/auth/realms/demo
+      - OIDC_IDP_URL=https://${KEYCLOAK_DOMAIN:-./keycloak-ekyc}:8443/auth/realms/demo
       - OIDC_SCOPES=openid email profile
       - OIDC_CLIENT_ID=idv-hub
       - OIDC_CLIENT_SECRET=secret
