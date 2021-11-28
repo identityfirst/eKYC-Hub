@@ -16,6 +16,7 @@
           "driving_permit"
       ],
       "documents_methods_supported": [
+          "uripp",
           "pipp",
           "sripp",
           "eid"
