@@ -8,7 +8,7 @@ claims.any = {
                 "evidence": [
                     {
                         "type": {
-                            "value": "id_document"
+                            "value": "document"
                         },
                         "method": {
                             "value": "uripp"
@@ -49,7 +49,7 @@ claims.full = {
                             "txn": null
                         },
                         "type": {
-                            "value": "id_document"
+                            "value": "document"
                         },
                         "method": {
                             "value": "uripp"
@@ -101,7 +101,7 @@ claims.addressFromDeamlPippIdCardPassport = {
                 "evidence": [
                     {
                         "type": {
-                            "value": "id_document"
+                            "value": "document"
                         },
                         "method": {
                             "value": "pipp"
