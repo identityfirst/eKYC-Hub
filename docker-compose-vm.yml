@@ -1,0 +1,137 @@
+version: '3'
+services:
+  keycloak-ekyc:
+    build:
+      context: keycloak-eKYC-plugin
+      dockerfile: Dockerfile
+
+    ports:
+      - 8080:8080
+      - 8787:8787
+      - 8443:8443
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/tmp/demo-realm.json
+      - IDV_URL=http://idv-hub:5000
+      - IDV_HTTPS_URL=https://idv-hub.identityfirst.tech:5443
+      - DEBUG=true
+      - DEBUG_PORT=*:8787
+    volumes:
+      - ./demo-realm.json:/tmp/demo-realm.json
+      - ./tls.crt:/etc/x509/https/tls.crt
+      - ./tls.key:/etc/x509/https/tls.key
+    healthcheck:
+      test: "curl -f http://localhost:8080/auth/realms/master/.well-known/openid-configuration || false"
+      timeout: 120s
+#  demo-rp-yes:
+#    build:
+#      context: keycloak-eKYC-demo-YES
+#      dockerfile: Dockerfile
+#    depends_on:
+#    - keycloak-ekyc
+#    environment:
+#      - IDP_URL=https://testidp.sandbox.yes.com/issuer/10000001
+#      - SELF_URL=http://demo-rp-yes.identityfirst.tech:3000
+#      - NODE_TLS_REJECT_UNAUTHORIZED=0
+#      - CLIENT_ID=${CLIENT_ID_YES}
+#      - CLIENT_SECRET=${CLIENT_SECRET_YES}
+#    ports:
+#      - 3000:3000
+#    expose:
+#      - "3000"
+
+# eKYC Hub Demo Application
+  demo-rp-ekyc:
+    build:
+      context: keycloak-eKYC-demo-RP
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak-ekyc
+    environment:
+      - IDP_URL=https://keycloak-ekyc.identityfirst.tech:8443
+      - SELF_URL=http://demo-rp.identityfirst.tech:3001
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_EKYC}
+      - CLIENT_SECRET=${CLIENT_SECRET_EKYC}
+      - PORT=${PORT_EKYC}
+    ports:
+      - ${PORT_EKYC}:${PORT_EKYC}
+    expose:
+      - ${PORT_EKYC}
+
+# BankID Demo Application
+  demo-rp-bankid:
+    build:
+      context: keycloak-eKYC-demo-BankID
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak-ekyc
+    environment:
+      - IDP_URL=https://gain.oidc.pki.nu
+      - SELF_URL=http://demo-rp-bankid.identityfirst.tech:3002
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_BANKID}
+      - CLIENT_SECRET=${CLIENT_SECRET_BANKID}
+      - PORT=${PORT_BANKID}
+    ports:
+      - ${PORT_BANKID}:${PORT_BANKID}
+    expose:
+      - ${PORT_BANKID}
+
+# Dizme Demo Application
+  demo-rp-dizme:
+    build:
+      context: keycloak-eKYC-demo-dizme
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak-ekyc
+    environment:
+      - IDP_URL=https://gain-oidc-cl.dizme.io
+      - SELF_URL=http://demo-rp-dizme.identityfirst.tech:3003
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_DIZME}
+      - CLIENT_SECRET=${CLIENT_SECRET_DIZME}
+      - PORT=${PORT_DIZME}
+    ports:
+      - ${PORT_DIZME}:${PORT_DIZME}
+    expose:
+      - ${PORT_DIZME}
+  idv-hub:
+    build:
+      context: idv-hub
+      dockerfile: Dockerfile
+    depends_on:
+    - keycloak-ekyc
+    environment:
+      - APP_ID=idv-hub
+      - PORT=5000
+      - SSL_PORT=5443
+      - LOG_LEVEL=debug
+      - REQUEST_LIMIT=100kb
+      - SESSION_SECRET=mySecret
+      - OPENAPI_SPEC=/api/v1/spec
+      - PASSBASE_SECRET_KEY=${PASSBASE_SECRET_KEY}
+      - PASSBASE_PUBLIC_KEY=${PASSBASE_PUBLIC_KEY}
+      - SELF_HOST=https://idv-hub:5443
+      - OIDC_IDP_URL=https://keycloak-ekyc.identityfirst.tech:8443/auth/realms/demo
+      - OIDC_SCOPES=openid email profile
+      - OIDC_CLIENT_ID=idv-hub
+      - OIDC_CLIENT_SECRET=secret
+      - OIDC_RESPONSE_TYPE=code
+      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_DB=ekyc
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - 5000:5000
+      - 5443:5443
+    volumes:
+      - ./idv-tls.crt:/app/dist/idv-tls.crt
+      - ./idv-tls.key:/app/dist/idv-tls.key
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=ekyc
+    ports:
+      - 27017:27017
+
