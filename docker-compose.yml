@@ -59,7 +59,7 @@ services:
       - OPENAPI_SPEC=/api/v1/spec
       - PASSBASE_SECRET_KEY=${PASSBASE_SECRET_KEY}
       - PASSBASE_PUBLIC_KEY=${PASSBASE_PUBLIC_KEY}
-      - SELF_HOST=https://idv-hub:5443
+      - SELF_HOST=https://${IDV_HUB_DOMAIN:-./idv-hub}:5443
       - OIDC_IDP_URL=https://${KEYCLOAK_DOMAIN:-./keycloak-ekyc}:8443/auth/realms/demo
       - OIDC_SCOPES=openid email profile
       - OIDC_CLIENT_ID=idv-hub
