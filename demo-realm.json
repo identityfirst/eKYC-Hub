@@ -291,7 +291,9 @@
       "redirectUris": [
         "http://172.17.0.1:3001/cb",
         "http://demo-rp:3001/cb",
+        "http://demo-rp:3000/cb",
         "http://demo-rp.identityfirst.tech:3001/cb",
+        "http://demo-rp.identityfirst.tech:3000/cb",
         "http://localhost:3001/cb"
       ],
       "webOrigins": [],

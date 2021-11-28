@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  demo-rp-yes:
+    build:
+      context: keycloak-eKYC-demo-RP
+      dockerfile: Dockerfile
+    environment:
+      - IDP_URL=https://testidp.sandbox.yes.com/issuer/10000001
+      - SELF_URL=http://demo-rp-yes.identityfirst.tech:${YES_RP_PORT:-3001}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_YES}
+      - CLIENT_SECRET=${CLIENT_SECRET_YES}
+    ports:
+      - ${YES_RP_PORT:-3001}:3000
+
+# BankID Demo Application
+  demo-rp-bankid:
+    build:
+      context: keycloak-eKYC-demo-RP
+      dockerfile: Dockerfile
+    environment:
+      - IDP_URL=https://gain.oidc.pki.nu
+      - SELF_URL=http://demo-rp-bankid.identityfirst.tech:${BANKID_RP_PORT:-3002}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_BANKID}
+      - CLIENT_SECRET=${CLIENT_SECRET_BANKID}
+    ports:
+      - ${BANKID_RP_PORT:-3002}:3000
+
+# Dizme Demo Application
+  demo-rp-dizme:
+    build:
+      context: keycloak-eKYC-demo-RP
+      dockerfile: Dockerfile
+    environment:
+      - IDP_URL=https://gain-oidc-cl.dizme.io
+      - SELF_URL=http://demo-rp-dizme.identityfirst.tech:${DIZME_RP_PORT:-3003}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CLIENT_ID=${CLIENT_ID_DIZME}
+      - CLIENT_SECRET=${CLIENT_SECRET_DIZME}
+    ports:
+      - ${DIZME_RP_PORT:-3003}:3000

@@ -34,7 +34,7 @@ var authorizationUrlConfig= (claim)=>{
 const idpUrl = idpHost+'/auth/realms/demo'
 
 const app = express()
-const port = process.env.PORT
+const port = 3000
 
 app.use(session({
     secret: 'keyboard cat',
