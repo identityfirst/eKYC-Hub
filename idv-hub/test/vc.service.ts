@@ -42,6 +42,13 @@ describe('Verification matching test', () => {
         runMathingTest('./vcs/drivinglicense.json','./inputs/request_mix_fail.json', './expected/null.json')
     });
 
+    it('should fail translate driving license [claims value]', () =>{
+        runMathingTest('./vcs/drivinglicense.json','./inputs/request_claims_value_fail.json', './expected/null.json')
+    });
+    it('should correctly translate driving license [claims value]', () =>{
+        runMathingTest('./vcs/drivinglicense.json','./inputs/request_claims_value_ok.json', './expected/response_claims_value_ok.json')
+    });
+
     function runMathingTest(vcFile,inputFile,expectedFile){
         var request = JSON.parse(fs.readFileSync(path.resolve(__dirname, inputFile), 'utf8'));
         var vc = JSON.parse(fs.readFileSync(path.resolve(__dirname, vcFile), 'utf8'));

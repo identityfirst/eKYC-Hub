@@ -1,0 +1,21 @@
+{
+  "userinfo": {
+    "aud": {
+      "essential": false
+    },
+    "iss": {
+      "essential": false
+    },
+    "verified_claims": {
+      "verification": {
+        "trust_framework": null
+      },
+      "claims": {
+        "given_name": {
+          "value": "JOE"
+        },
+        "family_name": null
+      }
+    }
+  }
+}

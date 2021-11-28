@@ -1,0 +1,20 @@
+{
+  "userinfo": {
+    "aud": {
+      "essential": false
+    },
+    "iss": {
+      "essential": false
+    },
+    "verified_claims": {
+      "verification": {
+        "trust_framework": null
+      },
+      "claims": {
+        "given_name": {
+          "value": "84a6fae6-ae81-4684-b26b-11cb3b33bed8"
+        }
+      }
+    }
+  }
+}

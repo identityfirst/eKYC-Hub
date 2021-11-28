@@ -52,18 +52,31 @@ export class VcService {
         }
 
         result.claims = this.getClaimsMathingRequest(verifiedClaims.claims, requestedVerifiedClaims.claims)
+        if(!result.claims){
+            return null
+        }
         return result
     }
 
     getClaimsMathingRequest(vcClaims: any, requestedClaims: any): any {
-        let result = {}
-        let requestedKeys = Object.keys(requestedClaims)
-        for (const key in vcClaims) {
-            if (requestedKeys.includes(key)) {
-                result[key] = vcClaims[key]
+        requestedClaims = this.getCleanedClaimsRequest(requestedClaims)
+        let requestedPaths: any = dot.dot(requestedClaims);
+        let matchingClaims = this.matchPathsWithObject(requestedPaths, vcClaims);
+        return matchingClaims;
+    }
+
+    getCleanedClaimsRequest( requestedClaims: any): any {
+        // let requestedKeys = Object.keys(requestedClaims)
+        for (const key in requestedClaims) {
+            if(requestedClaims[key]  instanceof Object){
+                delete requestedClaims[key].essential
+                delete requestedClaims[key].purpose
+                if(Object.keys(requestedClaims[key]).length === 0){
+                    requestedClaims[key] = null
+                }
             }
         }
-        return result;
+        return requestedClaims;
     }
 
     getVerificationMatchingRequest(vcVerification: any, requestedVerification: any): any {

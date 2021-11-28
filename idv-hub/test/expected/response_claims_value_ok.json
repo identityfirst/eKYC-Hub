@@ -1,0 +1,9 @@
+{
+      "verification": {
+        "trust_framework": null
+      },
+      "claims": {
+        "family_name": "DOE",
+        "given_name": "JOE"
+      }
+}
