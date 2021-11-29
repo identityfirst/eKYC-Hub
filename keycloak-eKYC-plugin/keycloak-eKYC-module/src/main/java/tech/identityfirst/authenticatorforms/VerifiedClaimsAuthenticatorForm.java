@@ -80,9 +80,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                 .setAttribute("notEnoughError", vcs.isEmpty())
                 .createForm("vc-form2.ftl");
 
-//        context.getAuthenticationSession().setClientNote("selectionVcs",objectMapper.writeValueAsString(selectionVcs));
         context.getAuthenticationSession().setUserSessionNote("selectionVcs",objectMapper.writeValueAsString(selectionVcs));
-//        context.getAuthenticationSession().setClientNote("availableVcs",objectMapper.writeValueAsString(vcs));
         context.getAuthenticationSession().setUserSessionNote("availableVcs",objectMapper.writeValueAsString(vcs));
         context.challenge(response);
     }

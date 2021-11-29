@@ -53,6 +53,8 @@
                type="submit" value='${msg("doSubmit")}' <#if notEnoughError>disabled </#if> />
         <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonLargeClass!}"
                type="button" value='Add more claims' onclick="window.location = '${accountUrl}'"/>
+        <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonLargeClass!}"
+               type="submit" value='Continue without claims' <#if !notEnoughError>disabled </#if> />
     </form>
     </div>
     <script>

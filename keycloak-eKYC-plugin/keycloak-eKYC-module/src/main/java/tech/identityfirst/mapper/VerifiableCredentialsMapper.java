@@ -96,7 +96,9 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
 
         List<JsonNode> resultClaims = getResultClaims(notes);
         log.info("Result claims "+ mapper.writeValueAsString(resultClaims));
-        token.getOtherClaims().put("verified_claims", resultClaims);
+        if(!resultClaims.isEmpty()) {
+            token.getOtherClaims().put("verified_claims", resultClaims);
+        }
         return token;
     }
 
@@ -111,7 +113,9 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
 
         List<JsonNode> resultClaims = getResultClaims(notes);
         log.info("Result claims "+ mapper.writeValueAsString(resultClaims));
-        token.getOtherClaims().put("verified_claims", resultClaims);
+        if(!resultClaims.isEmpty()){
+            token.getOtherClaims().put("verified_claims", resultClaims);
+        }
         return token;
     }
 
