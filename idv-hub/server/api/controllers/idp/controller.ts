@@ -13,24 +13,26 @@ import * as ss from "string-similarity";
 import HttpError, {StatusCode} from "../../errors/HttpError";
 import FetchingVcError from "../../errors/FetchingVcError";
 
-
 export class Controller {
-
 
 
     getVcs(req: any, res: Response): void {
 
         if (!Controller.hasRequestVerifiedClaims(req)) {
+            log.info('Failed request verification')
+            log.debug(`Claims: ${req.query.claims}`)
             res.send(400)
             return
         }
         if (!Controller.isClaimsRequestValid(req)) {
+            log.info('Failed request schema')
+            log.debug(`Claims: ${req.query.claims}`)
             res.send(400)
             return
         }
         let verifiedClaimsRequest = Controller.getRequestVerifiedClaims(req)
         log.debug(verifiedClaimsRequest)
-
+        log.debug(`Requested user: ${req.params.sub}`)
         new VcService().getBySub(req.params.sub)
             .then(vcs => Controller.filterVcs(vcs, verifiedClaimsRequest))
             .then((data) => res.send(data))
@@ -117,16 +119,18 @@ export class Controller {
         if (!req.query.claims) {
             return false
         }
-        let claims = JSON.parse(req.query.claims)
-        if (!claims.userinfo || !claims.userinfo.verified_claims) {
-            return false
-        }
         return true
     }
 
     private static getRequestVerifiedClaims(req: any): any {
         let claims = JSON.parse(req.query.claims)
-        return claims.userinfo.verified_claims
+        if(claims.userinfo && claims.userinfo.verified_claims) {
+            return claims.userinfo.verified_claims
+        }else if(claims.id_token && claims.id_token.verified_claims){
+            return claims.id_token.verified_claims
+        }
+        log.debug(`No verified_claims found`)
+        return null
     }
 
     private static isClaimsRequestValid(req: any): boolean {
@@ -143,17 +147,18 @@ export class Controller {
     }
 
     private static filterVcs(vcs: any, requestedVc: any) {
+        log.debug(`Number user claims in db: ${vcs.length}`)
         let vcService = new VcService()
         let filtered = []
         vcs.forEach(vc => {
             let result = vcService.getVerifiedClaimsMatchingRequest(vc, requestedVc)
             if (result) {
-                console.log("Matching vc found")
                 result.metadata = vc.metadata
                 result.id = vc._id
                 filtered.push(result)
             }
         })
+        log.debug(`Found ${filtered.length} matches`)
         return filtered
     }
 

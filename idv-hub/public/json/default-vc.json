@@ -21,7 +21,7 @@
           "date_of_issuance": "2011-07-12",
           "date_of_expiry": "2033-01-19"
         },
-        "type": "id_document",
+        "type": "document",
         "method": "uripp",
         "time": "2020-06-07T08:23:59.763Z"
       }

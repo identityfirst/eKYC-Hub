@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { Issuer } from 'openid-client'
 import jwtDecode from 'jwt-decode'
+import log from "../../../common/logger";
 export class Controller {
 
     static redirectUrl: string = process.env.SELF_HOST+'/api/v2/oidc/cb'
@@ -35,6 +36,7 @@ export class Controller {
                 console.log(tokenSet.access_token)
                 req.session.user = tokenSet
                 req.session.user.id_token_claims = jwtDecode(tokenSet.id_token)
+                log.debug(`received id_token claims ${JSON.stringify(req.session.user.id_token_claims)}`)
                 req.session.save()
             })
             .then(()=>res.redirect("/auth/"))

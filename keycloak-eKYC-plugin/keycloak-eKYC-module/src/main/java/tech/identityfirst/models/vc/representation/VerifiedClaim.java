@@ -4,7 +4,7 @@ package tech.identityfirst.models.vc.representation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 import java.util.Map;
@@ -15,11 +15,9 @@ import java.util.Map;
     "claims"
 })
 @Data
-@AllArgsConstructor
-public class OIDCVerifiedClaims {
-
+public class VerifiedClaim {
     @JsonProperty("verification")
-    public Verification verification;
+    private JsonNode verification;
     @JsonProperty("claims")
-    public Map<String,Object> claims;
+    private Map<String,Claim> claims;
 }

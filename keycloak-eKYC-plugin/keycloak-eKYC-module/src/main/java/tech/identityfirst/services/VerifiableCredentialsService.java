@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.SneakyThrows;
 import lombok.extern.jbosslog.JBossLog;
 import org.apache.http.HttpStatus;
 import org.keycloak.models.KeycloakSession;
+import tech.identityfirst.models.vc.representation.ClaimsRequest;
 import tech.identityfirst.models.vc.representation.VerifiedClaims;
 
 import javax.ws.rs.client.Client;
@@ -36,8 +38,9 @@ public class VerifiableCredentialsService {
         this.mapper = new ObjectMapper();
     }
 
-    public List<JsonNode> getFilteredVerifiableCredentialsByUserId(String userId, String claims){
-        return getExternalVc(userId, claims);
+    @SneakyThrows
+    public List<JsonNode> getFilteredVerifiableCredentialsByUserId(String userId, ObjectNode claims){
+        return getExternalVc(userId, mapper.writeValueAsString(claims));
     }
 
     private List<JsonNode> getExternalVc(String userId, String claims){

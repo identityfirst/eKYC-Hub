@@ -33,6 +33,7 @@
     "pino": "^6.2.1",
     "string-similarity": "^4.0.4",
     "ts-custom-error": "^3.2.0",
+    "tslog": "^3.3.0",
     "uuid4": "^2.0.2"
   },
   "devDependencies": {

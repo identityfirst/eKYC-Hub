@@ -90,7 +90,7 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
     public IDToken transformIDToken(IDToken token, ProtocolMapperModel mappingModel, KeycloakSession session,
                                     UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
         Map<String,String> notes = userSession.getNotes();
-        if(isNotVcFlow(notes)){
+        if(isNotVcFlow(notes) || !hasIdToken(notes)){
             return token;
         }
 
@@ -107,7 +107,7 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
     public AccessToken transformUserInfoToken(AccessToken token, ProtocolMapperModel mappingModel, KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
 
         Map<String,String> notes = userSession.getNotes();
-        if(isNotVcFlow(notes)){
+        if(isNotVcFlow(notes) || !hasUserinfo(notes)){
             return token;
         }
 
@@ -122,6 +122,14 @@ public class VerifiableCredentialsMapper  extends AbstractOIDCProtocolMapper imp
     private boolean isNotVcFlow(Map<String,String> notes){
         return !Boolean.valueOf(notes.get("vc")) || notes.get("selectedVcs") == null
                 || notes.get("availableVcs") == null || notes.get("selectionVcs") == null;
+    }
+
+    private boolean hasIdToken(Map<String,String> notes){
+        return  notes.get("hasIdToken") != null && Boolean.valueOf(notes.get("hasIdToken"));
+    }
+
+    private boolean hasUserinfo(Map<String,String> notes){
+        return  notes.get("hasUserinfo") != null && Boolean.valueOf(notes.get("hasUserinfo"));
     }
 
     private List<JsonNode> getResultClaims(Map<String, String> notes) throws JsonProcessingException {

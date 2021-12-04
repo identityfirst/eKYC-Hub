@@ -2,9 +2,11 @@ package tech.identityfirst.authenticatorforms;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
 import lombok.extern.jbosslog.JBossLog;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -15,6 +17,7 @@ import org.keycloak.models.KeycloakUriInfo;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.theme.Theme;
+import tech.identityfirst.models.vc.representation.ClaimsRequest;
 import tech.identityfirst.services.VerifiableCredentialsService;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,14 +57,34 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
             context.success();
             return;
         }
-        Map<String,String> claimPurposes = getClaimsPurposes(claims);
+
+        ClaimsRequest claimsRequest = objectMapper.readValue(claims,ClaimsRequest.class);
+
+        Map<String,String> claimPurposes = getClaimsPurposes(claimsRequest);
         String purpose = session.getContext().getAuthenticationSession().getClientNote("client_request_param_purpose");
         String userId = session.getContext().getAuthenticationSession().getAuthenticatedUser().getId();
+        log.infof("Verified credentials requested for user: %s",userId);
         VerifiableCredentialsService vcService = new VerifiableCredentialsService(session);
-        List<JsonNode> vcs = vcService.getFilteredVerifiableCredentialsByUserId(userId,claims);
+
+
+        List<JsonNode> vcs = new ArrayList<>();
+
+        boolean hasUserinfo = !ObjectUtils.isEmpty(claimsRequest.getUserinfo());
+        boolean hasIdToken= !ObjectUtils.isEmpty(claimsRequest.getId_token());
+
+        if( hasUserinfo){
+            log.info("Requesting vcs for userinfo");
+            ObjectNode userinfoRequest =  objectMapper.createObjectNode();
+            userinfoRequest.putPOJO("userinfo", claimsRequest.getUserinfo());
+            vcs = vcService.getFilteredVerifiableCredentialsByUserId(userId,userinfoRequest);
+        } else if (hasIdToken){
+            log.info("Requesting vcs for id_token");
+            ObjectNode idTokenRequest =  objectMapper.createObjectNode();
+            idTokenRequest.putPOJO("id_token", claimsRequest.getId_token());
+            vcs = vcService.getFilteredVerifiableCredentialsByUserId(userId,idTokenRequest);
+        }
+
         log.info(String.format("Received %d vcs from idv hub",vcs.size()));
-
-
 
 
         List<VerifiableCredentialSelection> selectionVcs = vcs.stream().flatMap(vc-> {
@@ -82,6 +106,8 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
 
         context.getAuthenticationSession().setUserSessionNote("selectionVcs",objectMapper.writeValueAsString(selectionVcs));
         context.getAuthenticationSession().setUserSessionNote("availableVcs",objectMapper.writeValueAsString(vcs));
+        context.getAuthenticationSession().setUserSessionNote("hasUserinfo",objectMapper.writeValueAsString(hasUserinfo));
+        context.getAuthenticationSession().setUserSessionNote("hasIdToken",objectMapper.writeValueAsString(hasIdToken));
         context.challenge(response);
     }
 
@@ -103,17 +129,19 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                 null);
     }
 
-    private Map<String,String> getClaimsPurposes(String claims){
+    private Map<String,String> getClaimsPurposes(ClaimsRequest claims){
         Map<String,String> result = new HashMap<>();
-        Map<String, Object> purposes =
-                JsonPath.parse(claims).read("$.userinfo.verified_claims.claims", Map.class);
-        for(Map.Entry<String,Object> entry : purposes.entrySet()){
-            if(entry != null) {
-                Map<String, Object> claim = (Map<String, Object>) entry.getValue();
-                if (claim !=null && claim.containsKey("purpose")) {
-                    result.put(entry.getKey(), (String) claim.get("purpose"));
-                }
-            }
+
+        if(Optional.ofNullable(claims.getId_token()).isPresent()){
+            claims.getId_token().getVerifiedClaims().getClaims().entrySet()
+                    .stream().filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
+                    .forEach(e -> result.put(e.getKey(),e.getValue().getPurpose()));
+        }
+
+        if(Optional.ofNullable(claims.getUserinfo()).isPresent()){
+            claims.getUserinfo().getVerifiedClaims().getClaims().entrySet()
+                    .stream().filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
+                    .forEach(e -> result.put(e.getKey(),e.getValue().getPurpose()));
         }
         return result;
     }

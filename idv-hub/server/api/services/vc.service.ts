@@ -1,6 +1,7 @@
 import {DbClient} from "../common/db.client";
 import {ObjectID} from "mongodb";
 import dot from 'dot-object';
+import log from "../../common/logger";
 
 export class VcService {
 
@@ -136,16 +137,19 @@ export class VcService {
             switch (lastNode) {
                 case "value":
                     if (!this.matchValue(key, value, target)) {
+                        log.debug(`Value match failed. key: ${key}, value: ${value}`)
                         return null
                     }
                     break;
                 case "values":
                     if (!this.matchValues(key, <string[]>value, target)) {
+                        log.debug(`Values match failed. key: ${key}, value: ${value}`)
                         return null
                     }
                     break;
                 case "max_age":
                     if (!this.matchMAxAge(key, value, target)) {
+                        log.debug(`Maxage match failed. key: ${key}, value: ${value}`)
                         return null
                     }
                     break;
