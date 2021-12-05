@@ -3,7 +3,7 @@ const { custom } = require('openid-client');
 const express = require('express')
 const session = require('express-session')
 const jwtDecode =require('jwt-decode')
-const idpHost = process.env.IDP_URL || 'http://localhost:8080'
+const idpUrl = process.env.IDP_URL || 'http://localhost:8080/auth/realms/demo'
 const selfHost = process.env.SELF_URL ||'http://172.17.0.1:3000'
 const path = require('path')
 var cors = require('cors');
@@ -30,8 +30,6 @@ var authorizationUrlConfig= (claim)=>{
     }
 }
 
-
-const idpUrl = idpHost+'/auth/realms/demo'
 
 const app = express()
 const port = 3000

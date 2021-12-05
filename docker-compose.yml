@@ -36,7 +36,7 @@ services:
     depends_on:
     - keycloak-ekyc
     environment:
-      - IDP_URL=https://${KEYCLOAK_DOMAIN:-keycloak-ekyc}:8443
+      - IDP_URL=https://${KEYCLOAK_DOMAIN:-keycloak-ekyc}:8443/auth/realms/demo
       - SELF_URL=http://${DEMO_RP_DOMAIN:-demo-rp}:${DEMO_RP_PORT:-3000}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - CLIENT_ID=${DEMO_RP_CLIENT_ID:-demo-rp}
