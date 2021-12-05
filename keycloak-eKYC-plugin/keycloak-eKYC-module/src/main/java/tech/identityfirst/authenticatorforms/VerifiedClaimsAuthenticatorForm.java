@@ -10,6 +10,7 @@ import lombok.extern.jbosslog.JBossLog;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
+import org.keycloak.OAuthErrorException;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.forms.account.freemarker.model.UrlBean;
@@ -17,6 +18,7 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakUriInfo;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.services.ErrorResponseException;
 import org.keycloak.theme.Theme;
 import tech.identityfirst.models.vc.representation.ClaimsRequest;
 import tech.identityfirst.services.VerifiableCredentialsService;
@@ -63,6 +65,9 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         ClaimsRequest claimsRequest = objectMapper.readValue(claims,ClaimsRequest.class);
 
         Map<String,String> claimPurposes = getClaimsPurposes(claimsRequest);
+
+        validateClaimPurposes(claimPurposes);
+
         String purpose = session.getContext().getAuthenticationSession().getClientNote("client_request_param_purpose");
         String userId = session.getContext().getAuthenticationSession().getAuthenticatedUser().getId();
         log.infof("Verified credentials requested for user: %s",userId);
@@ -113,6 +118,14 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         context.challenge(response);
     }
 
+    private void validateClaimPurposes(Map<String, String> claimPurposes) {
+        for(Map.Entry<String,String> claimPurpose : claimPurposes.entrySet()){
+            if(claimPurpose.getValue().length() < 3 || claimPurpose.getValue().length() > 300){
+                log.infof("Purpose of claim %s is shorter than 3 or longer than 300: %s",claimPurpose.getKey(),claimPurpose.getValue());
+                throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "Invalid purpose", Response.Status.BAD_REQUEST);
+            }
+        }
+    }
 
     private UrlBean getUrlBean(AuthenticationFlowContext context) throws IOException {
         KeycloakUriInfo uriInfo = session.getContext().getUri();

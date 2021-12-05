@@ -26,7 +26,7 @@
         "time": "2020-06-07T08:23:59.763Z"
       }
     ],
-    "trust_framework": null,
+    "trust_framework": "nist_800_63A_ial_2",
     "time": "2020-06-07T08:23:59.763Z",
     "verification_process": "da56c2e3-db5a-42b3-a14a-e33e12452512"
   },
