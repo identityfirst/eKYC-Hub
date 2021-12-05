@@ -6,7 +6,7 @@
         "evidence": [
           {
             "type": {
-              "value": "document"
+              "value": "id_document"
             },
             "method": {
               "value": "uripp"
