@@ -136,13 +136,17 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
 
         if(Optional.ofNullable(claims.getId_token()).isPresent()){
             claims.getId_token().getVerifiedClaims().getClaims().entrySet()
-                    .stream().filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
+                    .stream()
+                    .filter(e->!ObjectUtils.isEmpty(e.getValue()))
+                    .filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
                     .forEach(e -> result.put(e.getKey(),e.getValue().getPurpose()));
         }
 
         if(Optional.ofNullable(claims.getUserinfo()).isPresent()){
             claims.getUserinfo().getVerifiedClaims().getClaims().entrySet()
-                    .stream().filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
+                    .stream()
+                    .filter(e->!ObjectUtils.isEmpty(e.getValue()))
+                    .filter(e->!StringUtils.isEmpty(e.getValue().getPurpose()))
                     .forEach(e -> result.put(e.getKey(),e.getValue().getPurpose()));
         }
         return result;
