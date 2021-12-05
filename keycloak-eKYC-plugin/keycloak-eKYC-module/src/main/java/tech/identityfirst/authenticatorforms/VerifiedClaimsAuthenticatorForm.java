@@ -134,7 +134,9 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
     private Map<String,String> getClaimsPurposes(ClaimsRequest claims){
         Map<String,String> result = new HashMap<>();
 
-        if(Optional.ofNullable(claims.getId_token()).isPresent()){
+        if(!ObjectUtils.isEmpty(claims.getId_token()) &&
+                !ObjectUtils.isEmpty(claims.getId_token().getVerifiedClaims()) &&
+                !ObjectUtils.isEmpty(claims.getId_token().getVerifiedClaims().getClaims())){
             claims.getId_token().getVerifiedClaims().getClaims().entrySet()
                     .stream()
                     .filter(e->!ObjectUtils.isEmpty(e.getValue()))
@@ -142,7 +144,9 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                     .forEach(e -> result.put(e.getKey(),e.getValue().getPurpose()));
         }
 
-        if(Optional.ofNullable(claims.getUserinfo()).isPresent()){
+        if(!ObjectUtils.isEmpty(claims.getUserinfo()) &&
+        !ObjectUtils.isEmpty(claims.getUserinfo().getVerifiedClaims()) &&
+                !ObjectUtils.isEmpty(claims.getUserinfo().getVerifiedClaims().getClaims())){
             claims.getUserinfo().getVerifiedClaims().getClaims().entrySet()
                     .stream()
                     .filter(e->!ObjectUtils.isEmpty(e.getValue()))
