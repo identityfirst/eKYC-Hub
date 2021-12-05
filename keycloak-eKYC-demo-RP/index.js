@@ -6,6 +6,7 @@ const jwtDecode =require('jwt-decode')
 const idpUrl = process.env.IDP_URL || 'http://localhost:8080/auth/realms/demo'
 const selfHost = process.env.SELF_URL ||'http://172.17.0.1:3000'
 const path = require('path')
+var uuid = require('uuid');
 var cors = require('cors');
 const clientConfig = {
     client_id: process.env.CLIENT_ID,
@@ -26,7 +27,8 @@ var authorizationUrlConfig= (claim)=>{
         scope: scopes,
         claims: claim,
         purpose: "Sign in to eKYC Relying Party application",
-        prompt: "login"
+        prompt: "login",
+        state: uuid.v4()
     }
 }
 
@@ -70,6 +72,11 @@ app.get('/custom/login', (req, res) => {
 })
 
 app.get('/cb', (req, res) => {
+    if(req.query.error){
+        res.send(400)
+        return
+    }
+
     var client
     Issuer.discover(idpUrl)
         .then(issuer => client = new issuer.Client(clientConfig))

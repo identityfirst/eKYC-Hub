@@ -4,21 +4,23 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.jayway.jsonpath.JsonPath;
 import lombok.SneakyThrows;
 import lombok.extern.jbosslog.JBossLog;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-import org.keycloak.OAuthErrorException;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.authentication.AuthenticationFlowContext;
+import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.forms.account.freemarker.model.UrlBean;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakUriInfo;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-import org.keycloak.services.ErrorResponseException;
+import org.keycloak.protocol.oidc.OIDCLoginProtocol;
+import org.keycloak.protocol.oidc.utils.OIDCRedirectUriBuilder;
+import org.keycloak.protocol.oidc.utils.OIDCResponseMode;
 import org.keycloak.theme.Theme;
 import tech.identityfirst.models.vc.representation.ClaimsRequest;
 import tech.identityfirst.models.vc.representation.VerifiedClaims;
@@ -35,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,8 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         this.session = session;
         this.objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+
     }
 
     @SneakyThrows
@@ -67,7 +70,10 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
 
         Map<String,String> claimPurposes = getClaimsPurposes(claimsRequest);
 
-        validateClaimPurposes(claimPurposes);
+        if (hasInvalidPurpose(claimPurposes)){
+            context.failure(AuthenticationFlowError.INTERNAL_ERROR, getErrorResponse(context));
+            return;
+        }
 
         String purpose = session.getContext().getAuthenticationSession().getClientNote("client_request_param_purpose");
         String userId = session.getContext().getAuthenticationSession().getAuthenticatedUser().getId();
@@ -119,13 +125,27 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
         context.challenge(response);
     }
 
-    private void validateClaimPurposes(Map<String, String> claimPurposes) {
+    private boolean hasInvalidPurpose(Map<String, String> claimPurposes) {
         for(Map.Entry<String,String> claimPurpose : claimPurposes.entrySet()){
             if(claimPurpose.getValue().length() < 3 || claimPurpose.getValue().length() > 300){
                 log.infof("Purpose of claim %s is shorter than 3 or longer than 300: %s",claimPurpose.getKey(),claimPurpose.getValue());
-                throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "Invalid purpose", Response.Status.BAD_REQUEST);
+                return true;
             }
         }
+        return false;
+    }
+
+    private Response getErrorResponse(AuthenticationFlowContext context){
+        String redirect = context.getAuthenticationSession().getRedirectUri();
+        String state = context.getAuthenticationSession().getClientNote(OIDCLoginProtocol.STATE_PARAM);
+
+        OIDCRedirectUriBuilder redirectUri = OIDCRedirectUriBuilder.fromUri(redirect, OIDCResponseMode.QUERY, session, null);
+
+        redirectUri.addParam(OAuth2Constants.ERROR, "invalid_request");
+        redirectUri.addParam(OAuth2Constants.ERROR_DESCRIPTION, "Invalid purpose");
+        redirectUri.addParam(OAuth2Constants.STATE, state);
+
+        return  redirectUri.build();
     }
 
     private boolean hasVerifiedClaims(VerifiedClaims verifiedClaims){

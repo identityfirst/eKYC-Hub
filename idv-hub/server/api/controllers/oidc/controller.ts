@@ -28,6 +28,10 @@ export class Controller {
       };
 
     callback(req: any, res: Response): void {
+        if(req.query.error){
+            res.send(400)
+        }
+
         var client
         Issuer.discover(process.env.OIDC_IDP_URL)
             .then(issuer => client = new issuer.Client(Controller.clientConfig))
