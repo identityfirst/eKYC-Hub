@@ -129,7 +129,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
     }
 
     private boolean hasVerifiedClaims(VerifiedClaims verifiedClaims){
-        return !ObjectUtils.isEmpty(verifiedClaims) && ObjectUtils.isEmpty(verifiedClaims.getVerifiedClaims());
+        return !ObjectUtils.isEmpty(verifiedClaims) && !ObjectUtils.isEmpty(verifiedClaims.getVerifiedClaims());
     }
 
     private UrlBean getUrlBean(AuthenticationFlowContext context) throws IOException {
