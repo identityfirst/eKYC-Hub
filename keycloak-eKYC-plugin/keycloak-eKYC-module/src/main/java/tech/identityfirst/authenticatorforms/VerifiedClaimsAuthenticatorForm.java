@@ -21,6 +21,7 @@ import org.keycloak.models.UserModel;
 import org.keycloak.services.ErrorResponseException;
 import org.keycloak.theme.Theme;
 import tech.identityfirst.models.vc.representation.ClaimsRequest;
+import tech.identityfirst.models.vc.representation.VerifiedClaims;
 import tech.identityfirst.services.VerifiableCredentialsService;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -76,8 +77,8 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
 
         List<JsonNode> vcs = new ArrayList<>();
 
-        boolean hasUserinfo = !ObjectUtils.isEmpty(claimsRequest.getUserinfo());
-        boolean hasIdToken= !ObjectUtils.isEmpty(claimsRequest.getId_token());
+        boolean hasUserinfo = hasVerifiedClaims(claimsRequest.getUserinfo());
+        boolean hasIdToken= hasVerifiedClaims(claimsRequest.getId_token());
 
         if( hasUserinfo){
             log.info("Requesting vcs for userinfo");
@@ -125,6 +126,10 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
                 throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "Invalid purpose", Response.Status.BAD_REQUEST);
             }
         }
+    }
+
+    private boolean hasVerifiedClaims(VerifiedClaims verifiedClaims){
+        return !ObjectUtils.isEmpty(verifiedClaims) && ObjectUtils.isEmpty(verifiedClaims.getVerifiedClaims());
     }
 
     private UrlBean getUrlBean(AuthenticationFlowContext context) throws IOException {
