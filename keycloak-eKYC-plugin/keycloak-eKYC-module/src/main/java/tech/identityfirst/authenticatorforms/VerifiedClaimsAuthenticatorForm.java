@@ -1,5 +1,6 @@
 package tech.identityfirst.authenticatorforms;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -45,6 +46,7 @@ public class VerifiedClaimsAuthenticatorForm implements Authenticator {
     public VerifiedClaimsAuthenticatorForm(KeycloakSession session) {
         this.session = session;
         this.objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @SneakyThrows
