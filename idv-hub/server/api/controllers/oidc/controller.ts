@@ -20,6 +20,7 @@ export class Controller {
 
 
     login(req: Request, res: Response): void {
+        log.debug(`Connecting to ${process.env.OIDC_IDP_URL}`)
         Issuer.discover(process.env.OIDC_IDP_URL)
             .then(issuer => new issuer.Client(Controller.clientConfig))
             .then(client => client.authorizationUrl(Controller.authorizationUrlConfig))
