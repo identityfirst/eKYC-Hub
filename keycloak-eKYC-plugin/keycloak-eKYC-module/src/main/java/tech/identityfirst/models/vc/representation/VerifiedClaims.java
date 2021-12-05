@@ -19,5 +19,5 @@ import javax.json.JsonObject;
 @Data
 public class VerifiedClaims {
     @JsonProperty("verified_claims")
-    private VerifiedClaim verifiedClaims;
+    private List<VerifiedClaim> verifiedClaims;
 }

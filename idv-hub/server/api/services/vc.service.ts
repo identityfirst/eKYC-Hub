@@ -43,8 +43,23 @@ export class VcService {
         console.log(JSON.stringify(verifiedClaims, null, 2))
         console.log(JSON.stringify(requestedVerifiedClaims, null, 2))
         let result: any = {}
-        if (requestedVerifiedClaims.verification) {
-            let matchingVerification = this.getVerificationMatchingRequest(verifiedClaims.verification, requestedVerifiedClaims.verification)
+        if(!(requestedVerifiedClaims instanceof Array)){
+            requestedVerifiedClaims = [requestedVerifiedClaims]
+        }
+
+        for(const requestedVerifiedClaim  of requestedVerifiedClaims){
+            result = this.findMatchingVerification(verifiedClaims,requestedVerifiedClaim)
+            if(result){
+                return result
+            }
+        }
+        return null
+    }
+
+    findMatchingVerification(verifiedClaims: any,requestedVerifiedClaim:any ){
+        let result: any = {}
+        if (requestedVerifiedClaim.verification) {
+            let matchingVerification = this.getVerificationMatchingRequest(verifiedClaims.verification, requestedVerifiedClaim.verification)
             if (!matchingVerification) {
                 return null
             } else {
@@ -52,7 +67,7 @@ export class VcService {
             }
         }
 
-        result.claims = this.getClaimsMathingRequest(verifiedClaims.claims, requestedVerifiedClaims.claims)
+        result.claims = this.getClaimsMathingRequest(verifiedClaims.claims, requestedVerifiedClaim.claims)
         if(!result.claims){
             return null
         }

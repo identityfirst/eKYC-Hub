@@ -32,7 +32,6 @@ var authorizationUrlConfig= (claim)=>{
     }
 }
 
-
 const app = express()
 const port = 3000
 
@@ -48,26 +47,32 @@ app.options('*', cors());
 
 app.get('/login', (req, res) => {
     console.log(idpUrl)
+    req.session.authConfig = {scope:'openid email', prompt:"login", state: uuid.v4()}
+    req.session.save()
     Issuer.discover(idpUrl)
         .then(issuer => new issuer.Client(clientConfig))
-        .then(client => client.authorizationUrl({scope:'openid email', prompt:"login"}))
+        .then(client => client.authorizationUrl(req.session.authConfig))
         .then(url => res.redirect(url))
 })
 
 app.get('/login/:claim', (req, res) => {
     console.log(idpUrl)
+    req.session.authConfig = authorizationUrlConfig(claims[req.params.claim])
+    req.session.save()
     Issuer.discover(idpUrl)
         .then(issuer => new issuer.Client(clientConfig))
-        .then(client => client.authorizationUrl(authorizationUrlConfig(claims[req.params.claim])))
+        .then(client => client.authorizationUrl(req.session.authConfig))
         .then(url => res.redirect(url))
 })
 
 app.get('/custom/login', (req, res) => {
     let claims = JSON.parse(req.query.claims)
+    req.session.authConfig = authorizationUrlConfig(claims)
+    req.session.save()
     console.log(idpUrl)
     Issuer.discover(idpUrl)
         .then(issuer => new issuer.Client(clientConfig))
-        .then(client => client.authorizationUrl(authorizationUrlConfig(claims)))
+        .then(client => client.authorizationUrl(req.session.authConfig))
         .then(url => res.redirect(url))
 })
 
@@ -81,7 +86,7 @@ app.get('/cb', (req, res) => {
     Issuer.discover(idpUrl)
         .then(issuer => client = new issuer.Client(clientConfig))
         .then(()=> client.callbackParams(req))
-        .then(params => client.callback(selfHost+'/cb', params) )
+        .then(params => client.callback(selfHost+'/cb', params, {state:req.session.authConfig.state}) )
         .then(tokenSet=>{
             console.log(tokenSet.access_token)
             req.session.user = tokenSet
