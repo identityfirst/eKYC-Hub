@@ -121,4 +121,4 @@ function isAuthenticated(req, res, next) {
     res.redirect('/');
 }
 
-app.listen(port, () => console.log(`Demo rp listening at ${selfHost} and connecting to ${idpHost}`))
+app.listen(port, () => console.log(`Demo rp listening at ${selfHost} and connecting to ${idpUrl}`))
