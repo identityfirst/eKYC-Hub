@@ -11,7 +11,7 @@ import lombok.Data;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({
     "verification",
     "claims"

@@ -15,7 +15,7 @@ import lombok.Data;
 
 import javax.json.JsonObject;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class VerifiedClaims {
     @JsonProperty("verified_claims")
