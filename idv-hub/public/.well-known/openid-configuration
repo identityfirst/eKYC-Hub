@@ -6,6 +6,7 @@
    ],
    "evidence_supported": [
          "document",
+         "id_document",
          "electronic_record",
          "vouch",
          "electronic_signature"
